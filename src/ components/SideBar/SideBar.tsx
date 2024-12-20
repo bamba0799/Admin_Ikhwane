@@ -33,9 +33,9 @@ const sideBarItems = [
   },
 
   {
-    icon: "bi:patch-check-fill",
-    name:"Permissions",
-    path: "/permissions",
+    icon: "uiw:logout",
+    name:"Deconnexion",
+    path: "/",
   },
 ];
 
@@ -72,7 +72,13 @@ const SideBar: React.FC<SideBarProps> = ({ isSidebarOpen }) => {
                             className={`flex items-center rounded-md pl-2 py-[12px] hover:bg-blue-[20px] mt-2 ${
                                 activeTab === item.name ? "bg-white/30 text-white" : "text-white/70"
                             }`}
-                            onClick={() => setActiveTab(item.name)} // Update the active tab on click
+                            onClick={() => {
+                                if (item.name=="Deconnexion") {
+                                    console.log("deconnexion");
+                                    localStorage.clear();
+                                }
+                                setActiveTab(item.name);
+                            }} // Update the active tab on click
                         >
                             <Icon icon={item.icon} className="w-5 h-5" />
                             <span className="ml-[6px] text-[13px]">{item.name}</span>

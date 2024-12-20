@@ -25,26 +25,18 @@ const UpdateDortoirSeminariste = () => {
     const [genreSemi, setGenreSemi] = useState("");
 
     const [dortoirOptions, setDortoirOptions] = useState([]);
+    console.log("dortoirOptions", dortoirOptions);
+    
     const [relativeDortoirOptions, setRelativeDortoirOptions] = useState([]);
     // const [dortoir, setDortoir] = useState<any>([]);
     const navigate = useNavigate();
-    const { register, handleSubmit, setValue, formState, control } = useForm<UpdateDortoirSeminaristeFormValues>({
+    const { handleSubmit, setValue, formState, control } = useForm<UpdateDortoirSeminaristeFormValues>({
         defaultValues: {
 
             dortoir: "",
 
-
         }
     });
-    // const genreSemi = watch("genreSemi") || "";
-
-
-
-
-
-
-
-
     const { errors } = formState;
 
     const updateDortoirSeminariste = async (data: any) => {

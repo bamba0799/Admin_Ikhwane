@@ -20,6 +20,8 @@ import IndexPageMateriel  from './Pages/Materiel/IndexPage';
 import UpdateCo from "./Pages/Commission/UpdateCo";
 import UpdateDortoirSeminariste from "./Pages/Dortoir/UpdateDortoirSeminariste";
 import Detail from "./Pages/Materiel/Detail";
+import UpdateMateriel from "./Pages/Materiel/UpdateMateriel";
+import AddMateriel from "./Pages/Materiel/AddMateriel";
 
 function App() { 
   console.log("App");
@@ -53,7 +55,9 @@ function App() {
 
               {/* materiel */}
                <Route path="/materiel" element={< IndexPageMateriel/>} />
-               <Route path="/materiel-detail/:commission" element={< Detail/>} />
+               <Route path="/materiel-detail" element={< Detail/>} />
+               <Route path="/update-materiel/:materielId" element={< UpdateMateriel/>} />
+               <Route path="/add-materiel" element={< AddMateriel/>} />
             </Route>
             {/* Other routes */}
           </Routes>

@@ -25,11 +25,33 @@ export interface User {
     Total: number ;
   }
 
-  export interface UpdateDortoirSeminaristeFormValues{
-    dortoir: string;
-
+  export interface AddMaterielFormValues {
+    designation: string;  
+    quantite: number;
+    statut: string;      
+    date: string;
+    lieu: string;
+    cout: number;         
   }
+
+  export interface UpdateMaterielFormValues{
+    designation: string; 
+    quantite: number; 
+    statut: string; 
+    date: string; 
+    lieu: string; 
+    cout: number; 
+}
+
   
+export interface UpdateMaterielFormValues {
+  nomMateriel: string;
+  quantite: number;
+  etat: string;
+  genre: string;
+  sousComite: string;
+}
+
   export interface MembreCo {
     frere: number;         // Nombre de frères
     soeur: number;         // Nombre de sœurs
@@ -146,7 +168,10 @@ export interface User {
  }
 
 
+export interface UpdateDortoirSeminaristeFormValues {
 
+  dortoir: string;
+}
  export interface AddVisiteurFormValues {
   nomVisiteur: string;
   pernomVisiteur: string;

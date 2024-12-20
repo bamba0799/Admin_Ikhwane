@@ -167,7 +167,7 @@ const IndexPage = () => {
                                     eye={false}
                                 />
                                 {/* card2 */}
-                                {auth?.rolePers == "Accueil_Hebergement" ? null :
+                                {auth?.rolePers == "Pco" ? 
                                     <HomeCard onClickEye={() => navigate('/materiel')} bg={'bg-quaternary_green'} title={'Materiels'} item1={{
                                         title: "Loués",
                                         value: totalByComi?.loues
@@ -181,7 +181,22 @@ const IndexPage = () => {
                                         }}
                                         icon={'entypo:tools'}
                                         eye={true}
-                                    />}
+                                    />:
+                                    <HomeCard onClickEye={() => navigate(`/materiel-detail`)} bg={'bg-quaternary_green'} title={'Materiels'} item1={{
+                                        title: "Loués",
+                                        value: totalByComi?.loues
+                                    }} item2={{
+                                        title: "Achetés",
+                                        value: totalByComi?.achetes
+                                    }}
+                                        item3={{
+                                            title: "Total depenses",
+                                            value: totalByComi?.totalDepenses
+                                        }}
+                                        icon={'entypo:tools'}
+                                        eye={true}
+                                    />
+                                }
                                 {/* card3 */}
                                 {/* <HomeCard bg={'bg-quaternary_green'} title={'Caisse de l\'activité (en Fcfa)'} item1={{
                                     title: "Collecte",
