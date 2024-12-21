@@ -17,10 +17,10 @@ const IndexPage = () => {
     const [open, setOpen] = useState<boolean>(false);
     const [coId, setCoId] = useState<any>(null);
     const [isClicked, setIsClicked] = useState<boolean>(false);
+    
 
     let auth: any = localStorage.getItem("user");
     auth = JSON.parse(auth);
-    console.log("auth", auth);
 
     const [activeTabIndex, setActiveTabIndex] = React.useState<number>(0);
     const [totalByComi, setTotalByComi] = React.useState<any>([]);
@@ -29,6 +29,13 @@ const IndexPage = () => {
     const [selectedComiMember, setSelectedComiMember] = React.useState<any>(null);
     const [selectedComiMemberForpdf, setSelectedComiMemberForpdf] = React.useState<any>(null);
 
+      const [searchTerm, setSearchTerm] = useState<string>("");
+        const filteredMembre = selectedComiMember?.membres?.filter((item: any) =>
+            item.nomPers.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+
+        console.log("filteredMembre", filteredMembre);
+        
     const navigate = useNavigate();
 
 
@@ -56,10 +63,6 @@ const IndexPage = () => {
 
 
     const deleteCo = async (id: any) => {
-        // if(pcoPhone == auth?.phonePers){
-        //   toast.error("Vous ne pouvez pas vous supprimer vous même")
-        //   setOpen(false)
-        // } else{
 
         try {
             const { data } = await apiService.deleteCo(id)
@@ -73,21 +76,6 @@ const IndexPage = () => {
             toast.error("Une erreur s'est produite lors de la suppression du pco");
         }
     }
-
-    // const tab = [
-    //     { id: 0, name: "Communicatoin" },
-    //     { id: 1, name: "Restauration" },
-    //     { id: 2, name: "Formation" },
-    //     { id: 3, name: "Sécurité" },
-    //     { id: 4, name: "Protocole" },
-    //     { id: 5, name: "Hygiène" },
-    //     { id: 6, name: "Administration" },
-    //     { id: 7, name: "Accueil/Hébergement" },
-    //     { id: 8, name: "Logistique" },
-    //     { id: 9, name: "Finances" },
-    //     { id: 10, name: "Pépinère" },
-    //     { id: 11, name: "Santé" }
-    // ];
 
 
     const getListParCo = async () => {
@@ -197,21 +185,7 @@ const IndexPage = () => {
                                         eye={true}
                                     />
                                 }
-                                {/* card3 */}
-                                {/* <HomeCard bg={'bg-quaternary_green'} title={'Caisse de l\'activité (en Fcfa)'} item1={{
-                                    title: "Collecte",
-                                    value: 12
-                                }} item2={{
-                                    title: "Dépense",
-                                    value: 12
-                                }}
-                                    item3={{
-                                        title: "Différence",
-                                        value: 24
-                                    }}
-                                    icon={'entypo:tools'}
-                                    eye={true}
-                                /> */}
+
                             </div>
 
                         </div>
@@ -241,7 +215,7 @@ const IndexPage = () => {
                             </div>
                             <div className=' border-red-600 flex flex-row items-start md:items-center justify-between space-x-[20px] mt-[10px]'>
                                 <div className=' '>
-                                    <Input className='rounded-[5px]' type='text' id={"recherche"} placeholder='Rechercher' onChange={(e) => console.log(e.target.value)} />
+                                    <Input className='rounded-[5px]' type='text' id={"recherche"} placeholder='Rechercher' onChange={(e) => setSearchTerm(e.target.value)} />
                                 </div>
                                 <div className='flex flex-col  space-y-[10px] md:flex-row md:items-center md:justify-between md:space-x-[20px] md:space-y-[0px]'>
                                     <Button onClick={() => navigate("/add-commission")} outline={true} className='button-icon bg-quaternary_green' bg={''}>
@@ -270,23 +244,23 @@ const IndexPage = () => {
                                             <th scope="col" className="px-6 py-3">Situation</th>
 
                                             {
-                                                (auth?.rolePers == "Pco" && selectedComiMember?.commission == "Pco") ?
+                                                (auth?.rolePers == "Pco" && filteredMembre?.commission == "Pco") ?
                                                     <th scope="col" className="px-6 py-3">Actions</th> : null
                                             }
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                                         {
-                                            selectedComiMember?.membres?.map((item: any, index: number) => (
+                                            filteredMembre?.map((item: any, index: number) => (
                                                 <tr className={`${index % 2 == 0 ? "bg-white" : "bg-white/50"} dark:bg-gray-800`} key={index}>
                                                     <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                                        {item.nomPers} {item.prenomPers}
+                                                        {item.nomPers} {item.pernomPers}
                                                     </th>
                                                     <td className="px-6 py-4">{item.genrePers}</td>
                                                     <td className="px-6 py-4">{item.sousComite}</td>
                                                     <td className="px-6 py-4">{item.phonePers}</td>
-                                                    <td className="px-6 py-4">{item.situation && 'Néant'}</td>
-                                                    {(auth?.rolePers == "Pco" && selectedComiMember?.commission == "Pco") ?
+                                                    <td className="px-6 py-4">{item.situation ?? 'Néant'}</td>
+                                                    {(auth?.rolePers == "Pco" && filteredMembre?.commission == "Pco") ?
                                                         <td className="px-6 py-4">
                                                             <div className="flex items-center space-x-2">
                                                                 <EditButton onClick={() => navigate(`/update-co/${item.idpers}`)} />

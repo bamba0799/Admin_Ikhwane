@@ -52,6 +52,11 @@ const Header: React.FC<HeaderProps> = ({ toggleSideBar, isActiveMenuBar = true, 
 
 
   ]
+  const isRouteValid = (): boolean => {
+    const currentPath = window.location.pathname;
+    return HeaderIcon.some(item => item.path === currentPath); // Retourne true si le chemin actuel est dans la liste
+  };
+
 
   const handleRefresh = () => {
     window.location.reload();
@@ -79,9 +84,11 @@ const Header: React.FC<HeaderProps> = ({ toggleSideBar, isActiveMenuBar = true, 
         <div className="flex flex-row items-center justify-between">
           <div className="flex items-center justify-start rtl:justify-end">
             <div className="lg:hidden flex flex-row items-center space-x-[5px]">
-              <button onClick={toggleSideBar} className=" inline-flex items-center p-2 text-sm text-gray-500 rounded-lg  hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200">
+              {isRouteValid() &&
+                <button onClick={toggleSideBar} className=" inline-flex items-center p-2 text-sm text-gray-500 rounded-lg  hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200">
                 <Icon icon="vaadin:menu" className="w-4 h-4 text-black" />
               </button>
+              }
               <p className="text-[12px] text-green-700">Admin Ikhwane</p>
             </div>
             <div className="flex flex-row items-center space-x-[25px]">
