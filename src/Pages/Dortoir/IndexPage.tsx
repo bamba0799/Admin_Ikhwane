@@ -250,7 +250,7 @@ const IndexPage = () => {
                                                             auth?.rolePers != "Accueil_Hebergement" ? null :
                                                                 <td className="px-6 py-4 text-right">
                                                                     <div className='flex flex-row justify-start items-center space-x-2'>
-                                                                        <EditButton onClick={() => navigate(`/update-dortoir-seminariste/${item.idSemi}`)} />
+                                                                        <EditButton onClick={() => {navigate(`/update-dortoir-seminariste/${item.idSemi}`);localStorage.setItem('currentRouteId',"20")}} />
                                                                         <DeleteButton onClick={() => {
                                                                             setOpen(true)
                                                                             setSeminaristeId(item.idSemi)

@@ -1,6 +1,6 @@
 
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import SecondMain from '../../ components/Main/SecondMain';
 import SecondLayout from '../../layouts/SecondLayout';
 import Button from '../../ components/Button/Button';

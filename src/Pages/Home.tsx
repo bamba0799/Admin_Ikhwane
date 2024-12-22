@@ -32,6 +32,7 @@ function Home() {
   const [pcoId, setPcoId] = useState<any>(null);
   const [pcoPhone, setPcoPhone] = useState<any>(null);
   const [isClicked, setIsClicked] = useState<boolean>(false);
+  const [totalVisiteur, setTotalVisiteur] = useState<any>()
 
   const [pco, setPco] = useState([])
   const [totalFormateur, setTotalFormateur] = useState<any>(0)
@@ -96,6 +97,7 @@ function Home() {
   // }
   //https://github.com/vikas62081/material-table-YT/blob/pdfExport/src/App.js exporter en excel
 
+
   const deletePco = async (id: any) => {
     if (pcoPhone == auth?.phonePers) {
       toast.error("Vous ne pouvez pas vous supprimer vous même")
@@ -157,6 +159,7 @@ function Home() {
 
       const { data: totalVisiteur } = await apiService.getTotalVisiteurByGenre()
       console.log("totalVisiteur", totalVisiteur);
+      setTotalVisiteur(totalVisiteur)
 
 
     } catch (error) {
@@ -239,14 +242,14 @@ function Home() {
               </div>
               <HomeCard bg={'bg-quaternary_green mt-3 lg:mt-0 lg:ml-3'} title={'Nombre total de visite'} item1={{
                 title: "Frères",
-                value: 10
+                value: totalVisiteur?.genreVisiteur?.frere
               }} item2={{
                 title: "Sœurs",
-                value: 12
+                value: totalVisiteur?.genreVisiteur?.soeur
               }}
                 item3={{
                   title: "Total",
-                  value: 10
+                  value: totalVisiteur?.totalVisites
                 }}
                 icon={'fa-solid:home'}
                 eye={false}
@@ -291,14 +294,13 @@ function Home() {
             </div>
             <div className='mt-[10px] flex flex-row justify-between items-center'>
               <p className=' text-[12px] text-primary_green font-bold'>Les PCO du séminaire</p>
-              {auth?.rolePers == "Accueil_Hebergement" ? null
-                :
-                <Button onClick={() => navigate("/add-pco")} outline={true} className='button-icon bg-quaternary_green' bg={''}>
+              {auth?.rolePers == "Pco" ? 
+                <Button onClick={() => {navigate("/add-pco"); localStorage.setItem('currentRouteId',"20")}} outline={true} className='button-icon bg-quaternary_green' bg={''}>
                   <div className='border rounded-full p-[3px] bg-primary_green'>
                     <Icon icon="mdi:plus" className='text-white' />
                   </div>
                   <p className='text-secondary_green'>Ajouter un PCO</p>
-                </Button>}
+                </Button>:null}
             </div>
             <div className="relative overflow-x-auto shadow-sm mt-[10px]">
               <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">

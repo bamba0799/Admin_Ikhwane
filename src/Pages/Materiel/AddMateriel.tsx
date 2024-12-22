@@ -59,6 +59,7 @@ const AddMateriel = () => {
             console.log("addMateriel", addMateriel);
             toast.success("Matériel ajouté avec succès");
             navigate(`/materiel-detail`);
+            localStorage.setItem('currentRouteId',"20")
         } catch (error) {
             console.log("error", error);
             toast.error("Une erreur s'est produite lors de l'ajout du matériel");
@@ -73,7 +74,7 @@ const AddMateriel = () => {
                     <div className="flex justify-between">
                         <div className="w-full flex flex-row justify-between">
                             <h1 className="text-2xl font-semibold text-primary_green">Ajouter Materiel</h1>
-                            <Button onClick={() => navigate(`/materiel-detail`)} outline={true} className='button-icon bg-quaternary_green' bg={''}>
+                            <Button onClick={() => {navigate(`/materiel-detail`);localStorage.setItem('currentRouteId',"20")}} outline={true} className='button-icon bg-quaternary_green' bg={''}>
                                 <Icon icon="solar:arrow-left-linear" className='text-secondary_green w-[20px] h-[20px]' />
                                 <p className='text-secondary_green'>Retour</p>
                             </Button>

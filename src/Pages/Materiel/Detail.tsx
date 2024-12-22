@@ -111,8 +111,7 @@ const Detail = () => {
                     <div className='mt-4'>
                         <div className='flex flex-col lg:flex-row lg:items-center '>
                             <div className=' flex flex-col items-center space-y-2 lg:flex-row lg:items-center  lg:space-y-0 lg:space-x-3'>
-
-                                <HomeCard onClickEye={() => navigate('/materiel')} bg={'bg-quaternary_green'} title={'Materiels'} item1={{
+                                <HomeCard bg={'bg-quaternary_green'} title={'Materiels'} item1={{
                                     title: "Loués",
                                     value: 10
                                 }} item2={{
@@ -133,13 +132,13 @@ const Detail = () => {
                         {
                             auth?.rolePers == "Pco" ?
                                 <div className='mt-[10px] flex flex-row justify-end items-center'>
-                                    <Button onClick={() => navigate("/materiel-detail")} outline={true} className='button-icon bg-quaternary_green' bg={''}>
+                                    <Button onClick={() => navigate("/materiel")} outline={true} className='button-icon bg-quaternary_green' bg={''}>
                                         <Icon icon="solar:arrow-left-linear" className='text-secondary_green w-[20px] h-[20px]' />
                                         <p className='text-secondary_green'>Retour</p>
                                     </Button>
                                 </div> :
                                 <div className='mt-[10px] flex flex-row justify-end items-center'>
-                                    <Button onClick={() => navigate("/comite-organisation")} outline={true} className='button-icon bg-quaternary_green' bg={''}>
+                                    <Button onClick={() => {navigate("/comite-organisation");localStorage.setItem('currentRouteId',"2")}} outline={true} className='button-icon bg-quaternary_green' bg={''}>
                                         <Icon icon="solar:arrow-left-linear" className='text-secondary_green w-[20px] h-[20px]' />
                                         <p className='text-secondary_green'>Retour</p>
                                     </Button>
@@ -153,18 +152,7 @@ const Detail = () => {
                                     <Input className='rounded-[5px]' type='text' id={"recherche"} placeholder='Rechercher' onChange={(e) => setSearchTerm(e.target.value)} />
                                 </div>
                                 <div className='flex flex-col  space-y-[10px] md:flex-row md:items-center md:justify-between md:space-x-[20px] md:space-y-[0px]'>
-                                    {/* {auth?.rolePers != "Accueil_Hebergement" ? null :
-                                        <Button onClick={() => navigate("/add-seminariste")} outline={true} className='button-icon bg-quaternary_green' bg={''}>
-                                            <div className='border rounded-full p-[3px] bg-primary_green'>
-                                                <Icon icon="mdi:plus" className='text-white' />
-                                            </div>
-                                            <p className='text-secondary_green'>Ajouter séminariste </p>
-                                        </Button>
-                                    } */}
-                                    {/* <Button onClick={() => alert("sss")} outline={true} className='button-icon bg-tertiary_green' bg={''}>
-                                        <p className='text-secondary_green'>Modifier</p>
-                                    </Button> */}
-                                    <Button onClick={() => navigate(`/add-materiel`)} outline={true} className='button-icon bg-tertiary_green' bg={''}>
+                                    <Button onClick={() => {navigate(`/add-materiel`);localStorage.setItem('currentRouteId',"20")}} outline={true} className='button-icon bg-tertiary_green' bg={''}>
                                         <p className='text-secondary_green'>Ajouter</p>
                                     </Button>
 
@@ -216,7 +204,6 @@ const Detail = () => {
                                                 <tr>
                                                     <td className="text-center">Aucune donnée disponible</td>
                                                 </tr>
-
                                         }
                                     </tbody>
                                 </table>

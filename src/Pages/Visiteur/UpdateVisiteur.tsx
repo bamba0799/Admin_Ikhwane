@@ -61,7 +61,8 @@ const UpdateVisiteur = () => {
             const { data: seminariste } = await apiService.updateVisiteur(visiteurId!, datas);
             console.log("seminariste", seminariste);
             toast.success("Séminariste modifié avec succès");
-            navigate(-1);
+            localStorage.setItem('currentRouteId',"5")
+            navigate("/visiteur");
         } catch (error) {
             console.log("error", error);
             toast.error("Une erreur s'est produite lors de la modification du seminariste");
@@ -99,7 +100,7 @@ const UpdateVisiteur = () => {
                     <div className="flex justify-between">
                         <div className="w-full flex flex-row justify-between">
                             <h1 className="text-2xl font-semibold text-primary_green">Modifier un séminariste</h1>
-                            <Button onClick={() => navigate("/add-commission")} outline={true} className='button-icon bg-quaternary_green' bg={''}>
+                            <Button onClick={() => {navigate("/visiteur");localStorage.setItem('currentRouteId',"5")}} outline={true} className='button-icon bg-quaternary_green' bg={''}>
                                 <Icon icon="solar:arrow-left-linear" className='text-secondary_green w-[20px] h-[20px]' />
                                 <p className='text-secondary_green'>Retour</p>
                             </Button>

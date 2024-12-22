@@ -131,6 +131,10 @@ const apiService = {
         deleteMateriel: async (id: any) => deleteData("/materiel/delete", id),
         getMaterielById: async (materielId: any) => getDataById(`/materiel/getone`, materielId),
 
+
+        // rapport
+        addRapport:async (data:any) => postData("rapport/add", data),
+        getAllRapport: async() => getData("rapport/getAll")
 }; 
 
 export default apiService;

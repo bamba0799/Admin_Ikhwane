@@ -20,6 +20,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (res.data) {
         setUser(res.data.user);
         localStorage.setItem("user", JSON.stringify(res.data.user)); 
+        localStorage.setItem('currentRouteId',"1")
         setAccess_token(res.data.access_token);
         localStorage.setItem("access_token", res.data.access_token);
         navigate("/home");

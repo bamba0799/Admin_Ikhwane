@@ -11,8 +11,6 @@ import apiService from '../../../services/api';
 import toast from "react-hot-toast";
 
 
-
-
 const AddPco = () => {
     const navigate = useNavigate();
     const { register, handleSubmit, setValue, watch, formState } = useForm<AddPcoFormValues>({
@@ -31,10 +29,8 @@ const AddPco = () => {
     });
     const genrePers = watch("genrePers") || "";
     const sousComite = watch("sousComite") || "";
-    // const commission = watch("commission") || "";
     const roleMembre = watch("roleMembre") || "";
     const situation = watch("situation") || "false";
-
 
     const genreOptions = [
         { value: "frere", label: "Frère" },
@@ -45,42 +41,7 @@ const AddPco = () => {
         { value: "sousComite1", label: "Sous comité 1" },
         { value: "sousComite2", label: "Sous comité 2" },
         { value: "sousComite3", label: "Sous comité 3" },
-
     ];
-
-    // const commisionOptions = [
-    //     { value: "pco", label: "pco" },
-
-    // ];
-
-    // const rolePersOptions = [
-    //     { value: "pco", label: "pco" },
-    //     { value: "simple", label: "simple" },
-    //     { value: "responsable_admininistrion", label: "responsable_admininistrion" },
-    //     { value: "responsable_Communication", label: "responsable_Communication" },
-    //     { value: "responsable_Formation", label: "responsable_Formation" },
-    //     { value: "responsable_Restauration", label: "responsable_Restauration" },
-    //     { value: "responsable_Securité", label: "responsable_Securité" },
-    //     { value: "responsable_Finance", label: "responsable_Finance" },
-    //     { value: "responsable_Protocole", label: "responsable_Protocole" },
-    //     { value: "responsable_Hygiène", label: "responsable_Hygiène" },
-    //     { value: "responsable_Accueil", label: "responsable_Accueil" },
-    //     { value: "responsable_Logistique", label: "responsable_Logistique" },
-    //     { value: "responsable_Logistique", label: "responsable_Logistique" },
-    //     { value: "responsable_santé", label: "responsable_santé" },
-    //     { value: "responsable_adjoint_admininistrion", label: "responsable_adjoint_admininistrion" },
-    //     { value: "responsable_adjoint_Communication", label: "responsable_adjoint_Communication" },
-    //     { value: "responsable_adjoint_Formation", label: "responsable_adjoint_Formation" },
-    //     { value: "responsable_adjoint_Restauration", label: "responsable_adjoint_Restauration" },
-    //     { value: "responsable_adjoint_Securité", label: "responsable_adjoint_Securité" },
-    //     { value: "responsable_adjoint_Finance", label: "responsable_adjoint_Finance" },
-    //     { value: "responsable_adjoint_Protocole", label: "responsable_adjoint_Protocole" },
-    //     { value: "responsable_adjoint_Hygiène", label: "responsable_adjoint_Hygiène" },
-    //     { value: "responsable_adjoint_Accueil", label: "responsable_adjoint_Accueil" },
-    //     { value: "responsable_adjoint_Logistique", label: "responsable_adjoint_Logistique" },
-    //     { value: "responsable_adjoint_Pépinière", label: "responsable_adjoint_Pépinière" },
-    //     { value: "responsable_adjoint_santé", label: "responsable_adjoint_santé" },
-    // ]
 
     const roleMembreOptions = [
         { value: "responsable", label: "responsable" },
@@ -92,7 +53,6 @@ const AddPco = () => {
         { value: "true", label: "Sur le camp" },
         { value: "false", label: "Hors du camp" },
     ]
-
 
     const { errors } = formState;
 
@@ -123,21 +83,17 @@ const AddPco = () => {
             console.log("error", error);
             toast.error("Une erreur s'est produite lors de l'ajout du pco");
         }
-      
        }
     }
 
-
     return (
         <div>
-            <h1>Commission</h1>
-
             <SecondMain>
                 <SecondLayout title={"Comité d'organisation"}>
                     <div className="flex justify-between">
                         <div className="w-full flex flex-row justify-between">
                             <h1 className="text-2xl font-semibold text-primary_green">Ajouter Pco</h1>
-                            <Button onClick={() => navigate("/home")} outline={true} className='button-icon bg-quaternary_green' bg={''}>
+                            <Button onClick={() => {navigate("/home");localStorage.setItem('currentRouteId',"1")}} outline={true} className='button-icon bg-quaternary_green' bg={''}>
                                 <Icon icon="solar:arrow-left-linear" className='text-secondary_green w-[20px] h-[20px]' />
                                 <p className='text-secondary_green'>Retour</p>
                             </Button>

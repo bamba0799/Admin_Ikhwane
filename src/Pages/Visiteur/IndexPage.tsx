@@ -244,7 +244,7 @@ const IndexPage = () => {
                                 </div>
                                 <div className='flex flex-col  space-y-[10px] md:flex-row md:items-center md:justify-between md:space-x-[20px] md:space-y-[0px]'>
                                     { auth?.rolePers != "Accueil_Hebergement"? null:
-                                        <Button onClick={() => navigate("/add-visiteur")} outline={true} className='button-icon bg-quaternary_green' bg={''}>
+                                        <Button onClick={() => {navigate("/add-visiteur");localStorage.setItem('currentRouteId',"20")}} outline={true} className='button-icon bg-quaternary_green' bg={''}>
                                             <div className='border rounded-full p-[3px] bg-primary_green'>
                                                 <Icon icon="mdi:plus" className='text-white' />
                                             </div>
@@ -293,7 +293,7 @@ const IndexPage = () => {
                                                         {(activeTabIndex == 1 && auth?.rolePers=="Accueil_Hebergement")?
                                                             <td className="px-6 py-4 text-right">
                                                                 <div className='flex flex-row justify-start items-center space-x-2'>
-                                                                    <EditButton onClick={() => navigate(`/update-visiteur/${item.idVisiteur}`)} />
+                                                                    <EditButton onClick={() => {navigate(`/update-visiteur/${item.idVisiteur}`);localStorage.setItem('currentRouteId',"20")}} />
                                                                     <Terminate
                                                                         onClick={() => {
                                                                             setOpenTerminateModal(true);

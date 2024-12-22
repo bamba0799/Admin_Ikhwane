@@ -10,51 +10,58 @@ interface HeaderProps {
 
 }
 type HeaderIconType = {
+  id: number
   icon: string,
   name: string,
   path: string
 }
 
 const Header: React.FC<HeaderProps> = ({ toggleSideBar, isActiveMenuBar = true, authName }) => {
-  const [activeTab, setActiveTab] = useState<string>("");
+  const [routeLoaded, setRouteLoaded] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<number>(2);
   const HeaderIcon: HeaderIconType[] = [
     {
+      id: 1,
       icon: "material-symbols:empty-dashboard-sharp",
       name: "Tableau de bord",
       path: "/home",
     },
     {
+      id: 2,
       icon: "fa:group",
       name: "Comité d'organisation",
       path: "/comite-organisation",
     },
     {
+      id: 3,
       icon: "mdi:account-student",
       name: "Séminariste",
       path: "/seminariste",
     },
     {
+      id: 4,
       icon: "fa-solid:home",
       name: "Dortoir",
       path: "/dortoir",
     },
     {
+      id: 5,
       icon: "heroicons:users-solid",
       name: "Visiteurs",
       path: "/visiteur",
     },
 
     {
+      id: 6,
       icon: "uiw:logout",
       name: "Deconnexion",
       path: "/",
     },
-
-
   ]
   const isRouteValid = (): boolean => {
-    const currentPath = window.location.pathname;
-    return HeaderIcon.some(item => item.path === currentPath); // Retourne true si le chemin actuel est dans la liste
+    let currentRouteId: any = localStorage.getItem('currentRouteId')
+    currentRouteId = currentRouteId ? parseInt(currentRouteId, 10) : 0;
+    return HeaderIcon.some(item => item.id === currentRouteId); // Retourne true si le chemin actuel est dans la liste
   };
 
 
@@ -64,13 +71,13 @@ const Header: React.FC<HeaderProps> = ({ toggleSideBar, isActiveMenuBar = true, 
 
 
   const getOnglet = () => {
-    const currentPath = window.location.pathname;
-    console.log("currentPath", currentPath);
-
-    const activeItem = HeaderIcon.find(item => item.path === currentPath);
+    let currentRouteId: any = localStorage.getItem('currentRouteId')
+    currentRouteId = currentRouteId ? parseInt(currentRouteId, 10) : 0;
+    const activeItem = HeaderIcon.find(item => item.id === currentRouteId);
     if (activeItem) {
-      setActiveTab(activeItem.path);
+      setActiveTab(activeItem.id);
     }
+    setRouteLoaded(true);
   }
 
   useEffect(() => {
@@ -86,8 +93,8 @@ const Header: React.FC<HeaderProps> = ({ toggleSideBar, isActiveMenuBar = true, 
             <div className="lg:hidden flex flex-row items-center space-x-[5px]">
               {isRouteValid() &&
                 <button onClick={toggleSideBar} className=" inline-flex items-center p-2 text-sm text-gray-500 rounded-lg  hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200">
-                <Icon icon="vaadin:menu" className="w-4 h-4 text-black" />
-              </button>
+                  <Icon icon="vaadin:menu" className="w-4 h-4 text-black" />
+                </button>
               }
               <p className="text-[12px] text-green-700">Admin Ikhwane</p>
             </div>
@@ -129,11 +136,12 @@ const Header: React.FC<HeaderProps> = ({ toggleSideBar, isActiveMenuBar = true, 
                 console.log("deconnexion");
                 localStorage.clear();
               }
-              setActiveTab(item.path)
-            }} className={` w-[140px] flex flex-row justify-center items-center text-white/70 ${activeTab == item.path ? 'bg-white/30 text-white' : ''}`}>
+              localStorage.setItem('currentRouteId', item.id.toString())
+              setActiveTab(item.id)
+            }} className={` w-[140px] flex flex-row justify-center items-center text-white/70 ${activeTab == item.id ? 'bg-white/30 text-white' : ''}`}>
               <div className="flex flex-col justify-between items-center space-y-[3px]">
-                <Icon icon={item.icon} className={`w-[30px] h-[30px] ${activeTab == item.path ? 'text-white' : 'text-primary_gray'} `} />
-                <span className={`text-[12px] ${activeTab == item.path ? 'text-white' : 'text-primary_gray'}`}>{item.name}</span>
+                <Icon icon={item.icon} className={`w-[30px] h-[30px] ${activeTab == item.id ? 'text-white' : 'text-primary_gray'} `} />
+                <span className={`text-[12px] ${activeTab == item.id ? 'text-white' : 'text-primary_gray'}`}>{item.name}</span>
               </div>
             </a>
           ))}

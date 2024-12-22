@@ -66,7 +66,7 @@ const IndexPage = () => {
             <h1>Commission</h1>
 
             <SecondMain>
-                <SecondLayout title={"Comité d'organisation"}>
+                <SecondLayout title={"Matériels"}>
                     <div className="flex justify-between">
 
                         <div className="w-full flex flex-col justify-between">
@@ -76,7 +76,7 @@ const IndexPage = () => {
                                     <Input className='rounded-[5px]' type='text' id={"recherche"} placeholder='Rechercher' onChange={(e) => setSearchTerm(e.target.value)} />
                                 </div>
                                 <div className='flex flex-col items-center space-y-[10px] md:flex-row md:centeritems-start md:space-y-0 md:space-x-[20px]'>
-                                    <Button onClick={() => navigate("/comite-organisation")} outline={true} className='button-icon bg-quaternary_green' bg={''}>
+                                    <Button onClick={() => {navigate("/comite-organisation");localStorage.setItem('currentRouteId',"2")}} outline={true} className='button-icon bg-quaternary_green' bg={''}>
                                         <Icon icon="solar:arrow-left-linear" className='text-secondary_green w-[20px] h-[20px]' />
                                         <p className='text-secondary_green'>Retour</p>
                                     </Button>
@@ -112,7 +112,7 @@ const IndexPage = () => {
                                             <td className="px-6 py-4">{item.total_depense}</td>
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center space-x-2">
-                                                    <button onClick={()=>navigate(`/materiel-detail/${item.commission}`)} className='border border-secondary_green p-[5px] rounded-full'>
+                                                    <button onClick={()=>navigate(`/materiel-detail`)} className='border border-secondary_green p-[5px] rounded-full'>
                                                         <Icon icon="solar:eye-linear" className='text-secondary_green w-[14px] h-[14px]' />
                                                     </button>
                                                 </div>

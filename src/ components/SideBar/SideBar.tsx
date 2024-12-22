@@ -7,58 +7,60 @@ interface SideBarProps {
 }
 const sideBarItems = [
     {
-    icon: "material-symbols:empty-dashboard-sharp",
-    name:"Tableau de bord",
-    path: "/home",
-  },
-  {
-    icon: "fa:group",
-    name:"Comité d'organisation",
-    path: "/comite-organisation",
-  },
-  {
-    icon: "mdi:account-student",
-    name:"Séminariste",
-    path: "/seminariste",
-  },
-  {
-    icon: "fa-solid:home",
-    name:"Dortoir",
-    path: "/dortoir",
-  },
-  {
-    icon: "heroicons:users-solid",
-    name:"Visiteurs",
-    path: "/visiteur",
-  },
+        id: 1,
+        icon: "material-symbols:empty-dashboard-sharp",
+        name: "Tableau de bord",
+        path: "/home",
+    },
+    {
+        id: 2,
+        icon: "fa:group",
+        name: "Comité d'organisation",
+        path: "/comite-organisation",
+    },
+    {
+        id: 3,
+        icon: "mdi:account-student",
+        name: "Séminariste",
+        path: "/seminariste",
+    },
+    {
+        id: 4,
+        icon: "fa-solid:home",
+        name: "Dortoir",
+        path: "/dortoir",
+    },
+    {
+        id: 5,
+        icon: "heroicons:users-solid",
+        name: "Visiteurs",
+        path: "/visiteur",
+    },
 
-  {
-    icon: "uiw:logout",
-    name:"Deconnexion",
-    path: "/",
-  },
+    {
+        id: 6,
+        icon: "uiw:logout",
+        name: "Deconnexion",
+        path: "/",
+    },
 ];
 
 
-
-
-
 const SideBar: React.FC<SideBarProps> = ({ isSidebarOpen }) => {
-    const [activeTab, setActiveTab] = useState<string>("");
+    const [activeTab, setActiveTab] = useState<number>(1);
     useEffect(() => {
-        // Set the active tab based on the current URL path
-        const currentPath = window.location.pathname;
-        const activeItem = sideBarItems.find(item => item.path === currentPath) 
+        let currentRouteId: any = localStorage.getItem('currentRouteId')
+        currentRouteId = currentRouteId ? parseInt(currentRouteId, 10) : 0;
+        const activeItem = sideBarItems.find(item => item.id === currentRouteId)
         if (activeItem) {
-            setActiveTab(activeItem.name);
+            setActiveTab(activeItem.id);
         }
     }, []);
 
     return (
         <aside
-            className={` fixed top-0 left-0 z-40 bg-primary_green w-[199px] h-screen pt-[80px] bg-white-300 border-l-[2px] border-primary_orange lg:hidden transition-transform ${
-                isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-            }`}
+            className={` fixed top-0 left-0 z-40 bg-primary_green w-[199px] h-screen pt-[80px] bg-white-300 border-l-[2px] border-primary_orange lg:hidden transition-transform ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+                }`}
         >
             <div className="h-full px-[8px] pb-4 overflow-auto">
                 <span className="text-white/70 text-[16px] font-semibold">Menu</span>
@@ -69,15 +71,15 @@ const SideBar: React.FC<SideBarProps> = ({ isSidebarOpen }) => {
                         <a
                             key={index}
                             href={item.path}
-                            className={`flex items-center rounded-md pl-2 py-[12px] hover:bg-blue-[20px] mt-2 ${
-                                activeTab === item.name ? "bg-white/30 text-white" : "text-white/70"
-                            }`}
+                            className={`flex items-center rounded-md pl-2 py-[12px] hover:bg-blue-[20px] mt-2 ${activeTab === item.id ? "bg-white/30 text-white" : "text-white/70"
+                                }`}
                             onClick={() => {
-                                if (item.name=="Deconnexion") {
+                                if (item.name == "Deconnexion") {
                                     console.log("deconnexion");
                                     localStorage.clear();
                                 }
-                                setActiveTab(item.name);
+                                localStorage.setItem('currentRouteId', item.id.toString())
+                                setActiveTab(item.id);
                             }} // Update the active tab on click
                         >
                             <Icon icon={item.icon} className="w-5 h-5" />

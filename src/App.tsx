@@ -22,6 +22,8 @@ import UpdateDortoirSeminariste from "./Pages/Dortoir/UpdateDortoirSeminariste";
 import Detail from "./Pages/Materiel/Detail";
 import UpdateMateriel from "./Pages/Materiel/UpdateMateriel";
 import AddMateriel from "./Pages/Materiel/AddMateriel";
+import AddRapport from "./Pages/Rapport/AddRapport";
+import DisplayRapport from "./Pages/Rapport/DisplayRapport";
 
 function App() { 
   console.log("App");
@@ -58,6 +60,9 @@ function App() {
                <Route path="/materiel-detail" element={< Detail/>} />
                <Route path="/update-materiel/:materielId" element={< UpdateMateriel/>} />
                <Route path="/add-materiel" element={< AddMateriel/>} />
+               {/* rapport */}
+               <Route path="/add-rapport" element={< AddRapport/>} />
+               <Route path="/display-rapport" element={< DisplayRapport/>} />
             </Route>
             {/* Other routes */}
           </Routes>

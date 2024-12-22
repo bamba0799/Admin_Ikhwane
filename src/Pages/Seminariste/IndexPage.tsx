@@ -89,14 +89,6 @@ const IndexPage = () => {
     }, [activeTabIndex, isClicked]);
 
 
-    // useEffect(() => {
-    //   if(activeTabIndex > 0){
-    //     const currentNiveauDataByNiveau = niveau?.filter((_item: any, index: number) => index == activeTabIndex);
-    //     setCurrentNiveauData(currentNiveauDataByNiveau);
-    //     console.log("currentNiveauDataByNiveau", currentNiveauDataByNiveau);
-    //   }
-    // }, [activeTabIndex]);
-
     return (
         <div>
             <Main className=''>
@@ -169,7 +161,7 @@ const IndexPage = () => {
                         </div>
                         <div className='mt-[10px] flex flex-row justify-end items-center'>
                             {(auth?.rolePers != "Formation") ? null :
-                                <Button onClick={() => navigate("/add-niveau")} outline={true} className='button-icon bg-quaternary_green' bg={''}>
+                                <Button onClick={() => {navigate("/add-niveau");localStorage.setItem('currentRouteId',"20")}} outline={true} className='button-icon bg-quaternary_green' bg={''}>
                                     <div className='border rounded-full p-[3px] bg-primary_green'>
                                         <Icon icon="mdi:plus" className='text-white' />
                                     </div>
@@ -248,7 +240,7 @@ const IndexPage = () => {
 
                                                         <td className="px-6 py-4 text-right">
                                                             <div className='flex flex-row justify-start items-center space-x-2'>
-                                                                <EditButton onClick={() => navigate(`/update-seminariste/${item.idSemi}`)} />
+                                                                <EditButton onClick={() => {navigate(`/update-seminariste/${item.idSemi}`);localStorage.setItem('currentRouteId',"20")}} />
                                                                 <DeleteButton onClick={() => {
                                                                     setOpen(true)
                                                                     setSeminaristeId(item.idSemi)

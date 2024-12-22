@@ -13,18 +13,18 @@ export interface User {
     sousComite: string;
     roleMembre: string;
   }
-  
-  // export interface AuthResponse {
-  //   user: User;
-  //   access_token: string;
-  // }
 
-  interface CategoryStats {
-    frere: number ;
-    soeur: number ;
-    Total: number ;
+  export interface AddRapportFormValues {
+    libelleRapport: string;
+    tacheRealisees: string;
+    commentaires: string;
+    tachesNonRealisees: string;
+    causes: string;
+    difficultes: string;
+    suggestions: string;
+    infoSuplementaire: string;
   }
-
+  
   export interface AddMaterielFormValues {
     designation: string;  
     quantite: number;

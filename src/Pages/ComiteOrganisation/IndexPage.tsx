@@ -34,7 +34,6 @@ const IndexPage = () => {
             item.nomPers.toLowerCase().includes(searchTerm.toLowerCase())
         );
 
-        console.log("filteredMembre", filteredMembre);
         
     const navigate = useNavigate();
 
@@ -123,7 +122,6 @@ const IndexPage = () => {
             setTotalByComi(totalByComi);
         } catch (error) {
             console.log("error", error);
-
         }
     }
 
@@ -156,7 +154,7 @@ const IndexPage = () => {
                                 />
                                 {/* card2 */}
                                 {auth?.rolePers == "Pco" ? 
-                                    <HomeCard onClickEye={() => navigate('/materiel')} bg={'bg-quaternary_green'} title={'Materiels'} item1={{
+                                    <HomeCard onClickEye={() => {navigate('/materiel');localStorage.setItem('currentRouteId',"20")}} bg={'bg-quaternary_green'} title={'Materiels'} item1={{
                                         title: "Loués",
                                         value: totalByComi?.loues
                                     }} item2={{
@@ -170,7 +168,7 @@ const IndexPage = () => {
                                         icon={'entypo:tools'}
                                         eye={true}
                                     />:
-                                    <HomeCard onClickEye={() => navigate(`/materiel-detail`)} bg={'bg-quaternary_green'} title={'Materiels'} item1={{
+                                    <HomeCard onClickEye={() => {navigate(`/materiel-detail`);localStorage.setItem('currentRouteId',"20")}} bg={'bg-quaternary_green'} title={'Materiels'} item1={{
                                         title: "Loués",
                                         value: totalByComi?.loues
                                     }} item2={{
@@ -191,7 +189,7 @@ const IndexPage = () => {
                         </div>
                         {auth?.rolePers == "Pco" ? null :
                             <div className='mt-[10px] flex flex-row justify-end items-center'>
-                                <Button onClick={() => navigate("/add-commission")} outline={true} className='button-icon bg-quaternary_green' bg={''}>
+                                <Button onClick={() => {navigate("/add-commission");localStorage.setItem('currentRouteId',"20")}} outline={true} className='button-icon bg-quaternary_green' bg={''}>
                                     <div className='border rounded-full p-[3px] bg-primary_green'>
                                         <Icon icon="mdi:plus" className='text-white' />
                                     </div>
@@ -218,16 +216,16 @@ const IndexPage = () => {
                                     <Input className='rounded-[5px]' type='text' id={"recherche"} placeholder='Rechercher' onChange={(e) => setSearchTerm(e.target.value)} />
                                 </div>
                                 <div className='flex flex-col  space-y-[10px] md:flex-row md:items-center md:justify-between md:space-x-[20px] md:space-y-[0px]'>
-                                    <Button onClick={() => navigate("/add-commission")} outline={true} className='button-icon bg-quaternary_green' bg={''}>
+                                    <Button onClick={() => {navigate("/display-rapport");localStorage.setItem('currentRouteId',"20")}} outline={true} className='button-icon bg-quaternary_green' bg={''}>
                                         <Icon icon="fluent:document-edit-24-filled" className='text-primary_green text-[18px]' />
-                                        <p className='text-secondary_green'>Rapport </p>
+                                        <p className='text-secondary_green'>Voir rapport </p>
                                     </Button>
-                                    {/* <Button onClick={() => navigate("/add-commission")} outline={true} className='button-icon bg-quaternary_green' bg={''}>
+                                    <Button onClick={() => {navigate("/add-rapport");localStorage.setItem('currentRouteId',"20")}} outline={true} className='button-icon bg-quaternary_green' bg={''}>
                                         <div className='border rounded-full p-[3px] bg-primary_green'>
                                             <Icon icon="mdi:plus" className='text-white' />
                                         </div>
-                                        <p className='text-secondary_green'>Ajouter un membre </p>
-                                    </Button> */}
+                                        <p className='text-secondary_green'>Ajouter un rapport </p>
+                                    </Button>
                                     <Button onClick={() => downloadPdf()} outline={true} className='button-icon bg-tertiary_green' bg={''}>
                                         <p className='text-secondary_green'>Exporter</p>
                                     </Button>
