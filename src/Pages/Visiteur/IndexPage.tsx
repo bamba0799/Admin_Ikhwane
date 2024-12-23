@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Main from '../../ components/Main/Main';
 import PrimaryLayout from '../../layouts/PrimaryLayout';
 import HomeCard from '../../ components/Card/HomeCard';
@@ -12,15 +12,19 @@ import DeleteButton from '../../ components/Button/DeleteButton';
 import apiService from '../../../services/api';
 import DeleteModal from '../../ components/Modal/DeleteModal';
 import toast from 'react-hot-toast';
-import jsPDF from 'jspdf';
+// import jsPDF from 'jspdf';
 import Terminate from '../../ components/Button/Terminate';
 import TerminateModal from '../../ components/Modal/TerminateModal';
+import * as XLSX from 'xlsx';
+
 // import '../../assets/css/index.css';
 const IndexPage = () => {
     const [open, setOpen] = React.useState<boolean>(false);
     const [openTerminateModal, setOpenTerminateModal] = React.useState<boolean>(false);
     const [visiteurId, setVisiteurId] = React.useState<any>(null);
     const [isClicked, setIsClicked] = React.useState<boolean>(false);
+
+
 
     let auth: any = localStorage.getItem("user");
     auth = JSON.parse(auth);
@@ -53,6 +57,11 @@ const IndexPage = () => {
         { id: 0, label: "Visites terminées" },
         { id: 1, label: "Visites en cours" }
     ]
+
+    const [searchTerm, setSearchTerm] = useState<string>("");
+    const filteredVisiteurs = visiteurs?.filter((item: any) =>
+        item.nomVisiteur.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     const navigate = useNavigate();
 
@@ -87,16 +96,32 @@ const IndexPage = () => {
     }
 
 
-    const downloadPdf = () => {
-        const doc: any = new jsPDF()
-        doc.text(`Visiteur_${activeTabIndex == 0 ? 'Terminés' : "en_cours"}`, 40, 10)
-        doc.autoTable({
-            theme: "grid",
-            columns: columns.map(col => ({ ...col, dataKey: col.field })),
-            body: visiteurForPdf
-        })
-        doc.save(`Visitteur_${activeTabIndex == 0 ? 'Terminés' : "en_cours"}.pdf`)
-    }
+    // const downloadPdf = () => {
+    //     const doc: any = new jsPDF()
+    //     doc.text(`Visiteur_${activeTabIndex == 0 ? 'Terminés' : "en_cours"}`, 40, 10)
+    //     doc.autoTable({
+    //         theme: "grid",
+    //         columns: columns.map(col => ({ ...col, dataKey: col.field })),
+    //         body: visiteurForPdf
+    //     })
+    //     doc.save(`Visitteur_${activeTabIndex == 0 ? 'Terminés' : "en_cours"}.pdf`)
+    // }
+
+    const downloadExcel = () => {
+        const newData = visiteurForPdf.map((row:any) => {
+            const newRow = { ...row };
+            delete newRow.tableData;
+            return newRow;
+        });
+        const workSheet = XLSX.utils.json_to_sheet(newData);
+        XLSX.utils.sheet_add_aoa(workSheet, [
+            columns.map(col => col.title)
+        ], { origin: "A1" });
+        const workBook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workBook, workSheet, `Visiteur_${activeTabIndex == 0 ? 'Terminés' : "en_cours"}.xlsx`);
+        XLSX.writeFile(workBook, `Visiteur_${activeTabIndex == 0 ? 'Terminés' : "en_cours"}.xlsx`);
+
+    };
 
     const getNbVisiteurDuJours = async (currentDate: string) => {
         try {
@@ -240,18 +265,18 @@ const IndexPage = () => {
                             </div>
                             <div className=' border-red-600 flex flex-row items-start md:items-center justify-between space-x-[20px] mt-[10px]'>
                                 <div className=' '>
-                                    <Input className='rounded-[5px]' type='text' id={"recherche"} placeholder='Rechercher' onChange={(e) => console.log(e.target.value)} />
+                                    <Input className='rounded-[5px]' type='text' id={"recherche"} placeholder='Rechercher' onChange={(e) => setSearchTerm(e.target.value)} />
                                 </div>
                                 <div className='flex flex-col  space-y-[10px] md:flex-row md:items-center md:justify-between md:space-x-[20px] md:space-y-[0px]'>
-                                    { auth?.rolePers != "Accueil_Hebergement"? null:
-                                        <Button onClick={() => {navigate("/add-visiteur");localStorage.setItem('currentRouteId',"20")}} outline={true} className='button-icon bg-quaternary_green' bg={''}>
+                                    {auth?.rolePers != "Accueil_Hebergement" ? null :
+                                        <Button onClick={() => { navigate("/add-visiteur"); localStorage.setItem('currentRouteId', "20") }} outline={true} className='button-icon bg-quaternary_green' bg={''}>
                                             <div className='border rounded-full p-[3px] bg-primary_green'>
                                                 <Icon icon="mdi:plus" className='text-white' />
                                             </div>
                                             <p className='text-secondary_green'>Ajouter un visiteur </p>
                                         </Button>
                                     }
-                                    <Button onClick={() => downloadPdf()} outline={true} className='button-icon bg-tertiary_green' bg={''}>
+                                    <Button onClick={() => downloadExcel()} outline={true} className='button-icon bg-tertiary_green' bg={''}>
                                         <p className='text-secondary_green'>Exporter</p>
                                     </Button>
                                 </div>
@@ -267,9 +292,9 @@ const IndexPage = () => {
                                             <th scope="col" className="px-6 py-3">Contact</th>
                                             <th scope="col" className="px-6 py-3">Date d'entrée</th>
                                             <th scope="col" className="px-6 py-3">Date de sortie</th>
-                                            {(activeTabIndex == 1 && auth?.rolePers=="Accueil_Hebergement")?
+                                            {(activeTabIndex == 1 && auth?.rolePers == "Accueil_Hebergement") ?
                                                 <th scope="col" className="px-6 py-3">Actions</th>
-                                                :null
+                                                : null
                                             }
 
                                         </tr>
@@ -277,7 +302,7 @@ const IndexPage = () => {
                                     <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                                         {
                                             visiteurs?.length > 0 ?
-                                                visiteurs?.map((item: any, index: number) => (
+                                            filteredVisiteurs?.map((item: any, index: number) => (
                                                     <tr className={`${index % 2 == 0 ? "bg-white" : "bg-white/50"} dark:bg-gray-800`} key={index}>
                                                         <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                                             {item.nomVisiteur} {item.pernomVisiteur}
@@ -290,10 +315,10 @@ const IndexPage = () => {
                                                         </td>
                                                         <td className="px-6 py-4">{new Date(item.deletedAt).toLocaleString('fr-FR', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                                                         </td>
-                                                        {(activeTabIndex == 1 && auth?.rolePers=="Accueil_Hebergement")?
+                                                        {(activeTabIndex == 1 && auth?.rolePers == "Accueil_Hebergement") ?
                                                             <td className="px-6 py-4 text-right">
                                                                 <div className='flex flex-row justify-start items-center space-x-2'>
-                                                                    <EditButton onClick={() => {navigate(`/update-visiteur/${item.idVisiteur}`);localStorage.setItem('currentRouteId',"20")}} />
+                                                                    <EditButton onClick={() => { navigate(`/update-visiteur/${item.idVisiteur}`); localStorage.setItem('currentRouteId', "20") }} />
                                                                     <Terminate
                                                                         onClick={() => {
                                                                             setOpenTerminateModal(true);
@@ -306,7 +331,7 @@ const IndexPage = () => {
                                                                         setVisiteurId(item.idVisiteur);
                                                                     }} />
                                                                 </div>
-                                                            </td>:null
+                                                            </td> : null
                                                         }
 
                                                     </tr>

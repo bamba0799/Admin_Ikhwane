@@ -18,6 +18,8 @@ type HeaderIconType = {
 
 const Header: React.FC<HeaderProps> = ({ toggleSideBar, isActiveMenuBar = true, authName }) => {
   const [routeLoaded, setRouteLoaded] = useState<boolean>(false);
+  console.log("routeLoaded", routeLoaded);
+  
   const [activeTab, setActiveTab] = useState<number>(2);
   const HeaderIcon: HeaderIconType[] = [
     {

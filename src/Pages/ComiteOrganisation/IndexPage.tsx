@@ -9,10 +9,10 @@ import Input from '../../ components/Input/Input';
 import EditButton from '../../ components/Button/EditButton';
 import DeleteButton from '../../ components/Button/DeleteButton';
 import apiService from '../../../services/api';
-import jsPDF from 'jspdf';
+// import jsPDF from 'jspdf';
+import * as XLSX from 'xlsx';
 import toast from 'react-hot-toast';
 import DeleteModal from '../../ components/Modal/DeleteModal';
-// import '../../assets/css/index.css';
 const IndexPage = () => {
     const [open, setOpen] = useState<boolean>(false);
     const [coId, setCoId] = useState<any>(null);
@@ -43,23 +43,38 @@ const IndexPage = () => {
         { title: "Nom et Prénoms", field: "nomPrenomCo", },
         { title: "Genre", field: "genrePers", },
         { title: "Sous comité", field: "sousComite", },
-        { title: "Rôle", field: "rolePers", },
+        { title: "Dortoir", field: "dortoir", },
+        { title: "Santé", field: "sante", },
         { title: "Contact", field: "phonePers", },
         { title: "situation", field: "situation", },
     ]
 
 
-    const downloadPdf = () => {
-        const doc: any = new jsPDF()
-        doc.text(`Commission_${selectedComiMember?.commission}`, 20, 10)
-        doc.autoTable({
-            theme: "grid",
-            columns: columns.map(col => ({ ...col, dataKey: col.field })),
-            body: selectedComiMemberForpdf
-        })
-        doc.save(`${`Commission_${selectedComiMember?.commission}`}.pdf`)
-    }
+    // const downloadPdf = () => {
+    //     const doc: any = new jsPDF()
+    //     doc.text(`Commission_${selectedComiMember?.commission}`, 20, 10)
+    //     doc.autoTable({
+    //         theme: "grid",
+    //         columns: columns.map(col => ({ ...col, dataKey: col.field })),
+    //         body: selectedComiMemberForpdf
+    //     })
+    //     doc.save(`${`Commission_${selectedComiMember?.commission}`}.pdf`)
+    // }
 
+   const downloadExcel = () => {
+       const newData = selectedComiMemberForpdf.map((row:any) => {
+         const newRow = { ...row };
+         delete newRow.tableData;
+         return newRow;
+       });
+       const workSheet = XLSX.utils.json_to_sheet(newData);
+       XLSX.utils.sheet_add_aoa(workSheet, [
+         columns.map(col => col.title) 
+       ], { origin: "A1" });     
+       const workBook = XLSX.utils.book_new();
+       XLSX.utils.book_append_sheet(workBook, workSheet, `${selectedComiMember?.commission}.xlsx`);
+       XLSX.writeFile(workBook, `${selectedComiMember?.commission}.xlsx`);
+     };
 
     const deleteCo = async (id: any) => {
 
@@ -226,7 +241,7 @@ const IndexPage = () => {
                                         </div>
                                         <p className='text-secondary_green'>Ajouter un rapport </p>
                                     </Button>
-                                    <Button onClick={() => downloadPdf()} outline={true} className='button-icon bg-tertiary_green' bg={''}>
+                                    <Button onClick={() => downloadExcel()} outline={true} className='button-icon bg-tertiary_green' bg={''}>
                                         <p className='text-secondary_green'>Exporter</p>
                                     </Button>
                                 </div>

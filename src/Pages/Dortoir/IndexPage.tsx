@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Main from '../../ components/Main/Main';
 import PrimaryLayout from '../../layouts/PrimaryLayout';
 import HomeCard from '../../ components/Card/HomeCard';
@@ -11,7 +11,8 @@ import DeleteButton from '../../ components/Button/DeleteButton';
 import apiService from '../../../services/api';
 import DeleteModal from '../../ components/Modal/DeleteModal';
 import toast from 'react-hot-toast';
-import jsPDF from 'jspdf';
+import * as XLSX from 'xlsx';
+// import jsPDF from 'jspdf';
 // import '../../assets/css/index.css';
 const IndexPage = () => {
     const [open, setOpen] = React.useState<boolean>(false);
@@ -22,7 +23,7 @@ const IndexPage = () => {
     const [totalDortoirByGenre, setTotalDortoirByGenre] = React.useState<any>([]);
     const [activeTabIndex, setActiveTabIndex] = React.useState<number>(0);
     const [dortoirList, setDortoirList] = React.useState<any>([]);
-    const [currentDortoir, setCurrentDortoir] = React.useState<any>(null);
+    const [currentDortoir, setCurrentDortoir] = React.useState<any>([]);
 
     const [seminaristeForPdf, setSeminaristeForPdf] = React.useState<any>([]);
 
@@ -38,9 +39,12 @@ const IndexPage = () => {
         { title: "Santé", field: "etatSante", },
         { title: "Contact", field: "phoneSemi", },
         { title: "Situation", field: "situation", },
-        // { title: "Total soeurs", field: "total_soeurs", type: "numeric" },
-        // { title: "Total membres", field: 'total_membres', type: "currency" }
+
     ]
+     const [searchTerm, setSearchTerm] = useState<string>("");
+        const filteredSeminaristeDortoir= currentDortoir[0]?.seminaristes?.filter((item: any) =>
+            item.nomSemi.toLowerCase().includes(searchTerm.toLowerCase())
+        );
 
     const navigate = useNavigate();
 
@@ -110,16 +114,32 @@ const IndexPage = () => {
         }
     }
 
-    const downloadPdf = () => {
-        const doc: any = new jsPDF()
-        doc.text(`Seminariste du dortoir: ${currentDortoir[0]?.nomDortoir}`, 40, 10)
-        doc.autoTable({
-            theme: "grid",
-            columns: columns.map(col => ({ ...col, dataKey: col.field })),
-            body: seminaristeForPdf
-        })
-        doc.save(`seminariste_dortoir_${currentDortoir[0]?.nomDortoir}.pdf`)
-    }
+    // const downloadPdf = () => {
+    //     const doc: any = new jsPDF()
+    //     doc.text(`Seminariste du dortoir: ${currentDortoir[0]?.nomDortoir}`, 40, 10)
+    //     doc.autoTable({
+    //         theme: "grid",
+    //         columns: columns.map(col => ({ ...col, dataKey: col.field })),
+    //         body: seminaristeForPdf
+    //     })
+    //     doc.save(`seminariste_dortoir_${currentDortoir[0]?.nomDortoir}.pdf`)
+    // }
+
+      const downloadExcel = () => {
+           const newData = seminaristeForPdf.map((row:any) => {
+             const newRow = { ...row };
+             delete newRow.tableData;
+             return newRow;
+           });
+           const workSheet = XLSX.utils.json_to_sheet(newData);
+           XLSX.utils.sheet_add_aoa(workSheet, [
+             columns.map(col => col.title) 
+           ], { origin: "A1" });     
+           const workBook = XLSX.utils.book_new();
+           XLSX.utils.book_append_sheet(workBook, workSheet, `dortoir${currentDortoir[0]?.nomDortoir}.xlsx`);
+           XLSX.writeFile(workBook, `dortoir${currentDortoir[0]?.nomDortoir}.xlsx`);
+           
+         };
 
     useEffect(() => {
         getDortoirList();
@@ -198,7 +218,7 @@ const IndexPage = () => {
                             </div>
                             <div className=' border-red-600 flex flex-row items-start md:items-center justify-between space-x-[20px] mt-[10px]'>
                                 <div className=' '>
-                                    <Input className='rounded-[5px]' type='text' id={"recherche"} placeholder='Rechercher' onChange={(e) => console.log(e.target.value)} />
+                                    <Input className='rounded-[5px]' type='text' id={"recherche"} placeholder='Rechercher' onChange={(e) => setSearchTerm(e.target.value)} />
                                 </div>
                                 <div className='flex flex-col  space-y-[10px] md:flex-row md:items-center md:justify-between md:space-x-[20px] md:space-y-[0px]'>
                                     {/* <Button onClick={() => navigate("/add-commission")} outline={true} className='button-icon bg-quaternary_green' bg={''}>
@@ -207,7 +227,7 @@ const IndexPage = () => {
                                         </div>
                                         <p className='text-secondary_green'>Ajouter une personne </p>
                                     </Button> */}
-                                    <Button onClick={() => downloadPdf()} outline={true} className='button-icon bg-tertiary_green' bg={''}>
+                                    <Button onClick={() => downloadExcel()} outline={true} className='button-icon bg-tertiary_green' bg={''}>
                                         <p className='text-secondary_green'>Exporter</p>
                                     </Button>
                                 </div>
@@ -234,7 +254,7 @@ const IndexPage = () => {
                                     <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                                         {
                                             currentDortoir?.length > 0 ?
-                                                currentDortoir[0]?.seminaristes?.map((item: any, index: number) => (
+                                            filteredSeminaristeDortoir?.map((item: any, index: number) => (
                                                     <tr className={`${index % 2 == 0 ? "bg-white" : "bg-white/50"} dark:bg-gray-800`} key={index}>
                                                         <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                                             {item.nomSemi} {item.prenomSemi}

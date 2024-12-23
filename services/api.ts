@@ -128,6 +128,7 @@ const apiService = {
         updateMateriel: async (id:any,data: any) => updateData("/materiel/update", id, data),
         addMateriel: async (data: any) => postData("/materiel/add", data),
         getAllMateriel: async () => getData("/materiel/getAll"),
+        getTotalByComiMateriel: async () => getData("/materiel/getTotalByComi"),
         deleteMateriel: async (id: any) => deleteData("/materiel/delete", id),
         getMaterielById: async (materielId: any) => getDataById(`/materiel/getone`, materielId),
 

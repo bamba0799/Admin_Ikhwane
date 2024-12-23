@@ -12,8 +12,9 @@ import DeleteModal from '../../ components/Modal/DeleteModal';
 import toast from 'react-hot-toast';
 import SecondLayout from '../../layouts/SecondLayout';
 import SecondMain from '../../ components/Main/SecondMain';
-import jsPDF from 'jspdf';
+// import jsPDF from 'jspdf';
 import { Icon } from '@iconify/react/dist/iconify.js';
+import * as XLSX from 'xlsx';
 const Detail = () => {
     const { commission } = useParams();
     console.log("commission", commission);
@@ -41,6 +42,8 @@ const Detail = () => {
     const [materielId, setMaterielId] = React.useState<any>(null);
 
     const [isClicked, setIsClicked] = React.useState<boolean>(false);
+    const [totalByComiMateriel, setTotalByComiMateriel] = React.useState<any>(null);
+
 
 
 
@@ -66,16 +69,42 @@ const Detail = () => {
         }
     }
 
-    const downloadPdf = () => {
-        const doc: any = new jsPDF()
-        doc.text("Detail materiel", 20, 10)
-        doc.autoTable({
-            theme: "grid",
-            columns: columns.map(col => ({ ...col, dataKey: col.field })),
-            body: materielForPdf
-        })
-        doc.save('materiel.pdf')
+    // const downloadPdf = () => {
+    //     const doc: any = new jsPDF()
+    //     doc.text("Detail materiel", 20, 10)
+    //     doc.autoTable({
+    //         theme: "grid",
+    //         columns: columns.map(col => ({ ...col, dataKey: col.field })),
+    //         body: materielForPdf
+    //     })
+    //     doc.save('materiel.pdf')
+    // }
+
+    const getTotalByComiMateriel = async () => {
+        try {
+            const { data: totalByComiMateriel } = await apiService.getTotalByComiMateriel();
+            console.log("totalByComiMateriel", totalByComiMateriel);
+            setTotalByComiMateriel(totalByComiMateriel);
+        } catch (error) {
+            console.error("Error in getTotalByComiMateriel:", error);
+        }
     }
+
+      const downloadExcel = () => {
+        const newData = materielForPdf.map((row:any) => {
+          const newRow = { ...row };
+          delete newRow.tableData;
+          return newRow;
+        });
+        const workSheet = XLSX.utils.json_to_sheet(newData);
+        XLSX.utils.sheet_add_aoa(workSheet, [
+          columns.map(col => col.title) 
+        ], { origin: "A1" });
+      
+        const workBook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workBook, workSheet, "Commission");
+        XLSX.writeFile(workBook, "Materiel.xlsx");
+      };
 
 
     const getAllMateriel = async () => {
@@ -102,6 +131,7 @@ const Detail = () => {
 
     useEffect(() => {
         getAllMateriel();
+        getTotalByComiMateriel();
     }, [isClicked])
 
     return (
@@ -113,14 +143,14 @@ const Detail = () => {
                             <div className=' flex flex-col items-center space-y-2 lg:flex-row lg:items-center  lg:space-y-0 lg:space-x-3'>
                                 <HomeCard bg={'bg-quaternary_green'} title={'Materiels'} item1={{
                                     title: "Loués",
-                                    value: 10
+                                    value: totalByComiMateriel?.loues
                                 }} item2={{
                                     title: "Achetés",
-                                    value: 10
+                                    value: totalByComiMateriel?.achetes
                                 }}
                                     item3={{
                                         title: "Total depenses",
-                                        value: 10
+                                        value: totalByComiMateriel?.totalDepenses
                                     }}
                                     icon={'entypo:tools'}
                                     eye={false}
@@ -156,7 +186,7 @@ const Detail = () => {
                                         <p className='text-secondary_green'>Ajouter</p>
                                     </Button>
 
-                                    <Button onClick={() => downloadPdf()} outline={true} className='button-icon bg-tertiary_green' bg={''}>
+                                    <Button onClick={() => downloadExcel()} outline={true} className='button-icon bg-tertiary_green' bg={''}>
                                         <p className='text-secondary_green'>Exporter</p>
                                     </Button>
 

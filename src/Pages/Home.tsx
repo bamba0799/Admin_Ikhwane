@@ -1,15 +1,13 @@
 import { useEffect, useState } from 'react'
 import Main from '../ components/Main/Main'
 import { useNavigate } from 'react-router-dom';
-
-// import { Button } from 'flowbite-react'
 import Input from '../ components/Input/Input'
 import HomeCard from '../ components/Card/HomeCard'
 import PrimaryLayout from '../layouts/PrimaryLayout'
 import { Icon } from '@iconify/react/dist/iconify.js'
-
+import * as XLSX from 'xlsx';
 import apiService from '../../services/api'
-import jsPDF from 'jspdf'
+// import jsPDF from 'jspdf'
 import 'jspdf-autotable'
 import Button from '../ components/Button/Button'
 import { Commision, MembreCo, Seminariste } from '../../services/model'
@@ -128,16 +126,36 @@ function Home() {
     }
   }
 
-  const downloadPdf = () => {
-    const doc: any = new jsPDF()
-    doc.text("Commission Ikhwane", 20, 10)
-    doc.autoTable({
-      theme: "grid",
-      columns: columns.map(col => ({ ...col, dataKey: col.field })),
-      body: commission
-    })
-    doc.save('table.pdf')
-  }
+  // const downloadPdf = () => {
+  //   const doc: any = new jsPDF()
+  //   doc.text("Commission Ikhwane", 20, 10)
+  //   doc.autoTable({
+  //     theme: "grid",
+  //     columns: columns.map(col => ({ ...col, dataKey: col.field })),
+  //     body: commission
+  //   })
+  //   doc.save('table.pdf')
+  // }
+
+
+  
+
+  const downloadExcel = () => {
+    const newData = commission.map(row => {
+      const newRow = { ...row };
+      return newRow;
+    });
+    const workSheet = XLSX.utils.json_to_sheet(newData);
+    XLSX.utils.sheet_add_aoa(workSheet, [
+      columns.map(col => col.title) 
+    ], { origin: "A1" });
+  
+    const workBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workBook, workSheet, "Commission");
+    XLSX.writeFile(workBook, "Commission.xlsx");
+  };
+  
+  
 
   const getHomeData = async () => {
     setIsLoading(true)
@@ -259,7 +277,7 @@ function Home() {
               <div className=' '>
                 <Input className='rounded-[5px]' type='text' id={"recherche"} placeholder='Rechercher' onChange={(e) => setSearchTerm(e.target.value)} />
               </div>
-              <Button onClick={() => downloadPdf()} outline={true} className='button-icon bg-tertiary_green' bg={''}>
+              <Button onClick={() => downloadExcel()} outline={true} className='button-icon bg-tertiary_green' bg={''}>
                 <p className='text-secondary_green'>Exporter</p>
               </Button>
             </div>
@@ -274,7 +292,6 @@ function Home() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-
                   {
                     filteredCommission.map((item, index) => (
                       <tr className={`${index % 2 == 0 ? "bg-white" : "bg-white/50"} dark:bg-gray-800`} key={index}>
@@ -335,12 +352,10 @@ function Home() {
                                 setOpen(true)
                                 setPcoId(item.idpers)
                                 setPcoPhone(item.phonePers)
-
                               }} />
                             </div>
                             </td>
                           }
-                        
                       </tr>
                     ))
                   }

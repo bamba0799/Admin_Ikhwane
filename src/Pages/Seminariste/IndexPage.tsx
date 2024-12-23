@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Main from '../../ components/Main/Main';
 import PrimaryLayout from '../../layouts/PrimaryLayout';
 import HomeCard from '../../ components/Card/HomeCard';
@@ -11,6 +11,8 @@ import DeleteButton from '../../ components/Button/DeleteButton';
 import apiService from '../../../services/api';
 import DeleteModal from '../../ components/Modal/DeleteModal';
 import toast from 'react-hot-toast';
+import * as XLSX from 'xlsx';
+
 const IndexPage = () => {
 
     let auth: any = localStorage.getItem("user");
@@ -29,8 +31,34 @@ const IndexPage = () => {
 
     const [seminaristeId, setSeminaristeId] = React.useState<any>(null);
 
+
     const [currentNiveauData, setCurrentNiveauData] = React.useState<any>([]);
     const [niveau, setNiveau] = React.useState<any>(null);
+    const [currentNiveauForpdf, setCurrentNiveauForpdf] = useState<any>([])
+
+    const [searchTerm, setSearchTerm] = useState<string>("");
+    const filteredSeminariste = currentNiveauData[0]?.seminariste?.filter((item: any) =>
+        item.nomSemi.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    const columns = [
+        { title: "Nom et Prénoms", field: "nomPrenomSemi", },
+        { title: "Genre", field: "genrePers", },
+        { title: "Sous comité", field: "sousComite", },
+        { title: "Santé", field: "etatSante", },
+        { title: "Dortoir", field: "nomdortoir", },
+        { title: "Contact", field: "phonePers", },
+        { title: "situation", field: "situation", },
+    ]
+    const columnsTous = [
+        { title: "Nom et Prénoms", field: "nomPrenomSemi", },
+        { title: "Genre", field: "genreSemi", },
+        { title: "Sous comité", field: "sousComite", },
+        { title: "Niveau", field: "nomNiveau", },
+        { title: "Santé", field: "etatSante", },
+        { title: "Dortoir", field: "nomdortoir", },
+        { title: "Contact", field: "phoneSemi", },
+        { title: "situation", field: "situation", },
+    ]
 
     const navigate = useNavigate();
 
@@ -61,13 +89,12 @@ const IndexPage = () => {
             setTotalSoeurSeminariste(totalSoeurSeminariste);
             setTotalSeminariste(totalSeminarist);
             console.log("statistiqueSeminariste", stat);
-
-
         } catch (error) {
             console.error("Error in getStatistiqueSeminariste:", error);
-
         }
     }
+
+
 
     const getNiveau = async () => {
         try {
@@ -77,11 +104,45 @@ const IndexPage = () => {
             const currentNiveauDataByNiveau = nivo?.filter((_item: any, index: number) => index == activeTabIndex);
             setCurrentNiveauData(currentNiveauDataByNiveau);
             console.log("currentNiveauDataByNiveau", currentNiveauDataByNiveau);
+            const currentNiveauDataByNiveauForpdf = currentNiveauDataByNiveau[0]?.seminariste.map((item: any) => {
+                return {
+                    nomPrenomSemi: item.nomSemi + " " + item.prenomSemi,
+                    genreSemi: item.genreSemi,
+                    sousComite: item.sousComite,
+                    nomNiveau: item.nomNiveau,
+                    etatSante: item.etatSante,
+                    nomdortoir: item.nomdortoir,
+                    phoneSemi: item.phoneSemi,
+                    situation: item.situation ?? 'Néant',
+                }
+            })
+            setCurrentNiveauForpdf(currentNiveauDataByNiveauForpdf);
 
         } catch (error) {
             console.error("Error in getNiveau:", error);
         }
     }
+    const downloadExcel = () => {
+        const newData = currentNiveauForpdf.map((row: any) => {
+            const newRow = { ...row };
+            delete newRow.tableData;
+            return newRow;
+        });
+        const workSheet = XLSX.utils.json_to_sheet(newData);
+        if (currentNiveauData[0]?.nomNiveau == "Tous") {
+            XLSX.utils.sheet_add_aoa(workSheet, [
+                columnsTous.map(col => col.title)
+            ], { origin: "A1" });
+        } else {
+            XLSX.utils.sheet_add_aoa(workSheet, [
+                columns.map(col => col.title)
+            ], { origin: "A1" });
+        }
+        const workBook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workBook, workSheet, `${currentNiveauData[0]?.nomNiveau}.xlsx`);
+        XLSX.writeFile(workBook, `${currentNiveauData[0]?.nomNiveau}.xlsx`);
+
+    };
 
     useEffect(() => {
         getNiveau();
@@ -161,7 +222,7 @@ const IndexPage = () => {
                         </div>
                         <div className='mt-[10px] flex flex-row justify-end items-center'>
                             {(auth?.rolePers != "Formation") ? null :
-                                <Button onClick={() => {navigate("/add-niveau");localStorage.setItem('currentRouteId',"20")}} outline={true} className='button-icon bg-quaternary_green' bg={''}>
+                                <Button onClick={() => { navigate("/add-niveau"); localStorage.setItem('currentRouteId', "20") }} outline={true} className='button-icon bg-quaternary_green' bg={''}>
                                     <div className='border rounded-full p-[3px] bg-primary_green'>
                                         <Icon icon="mdi:plus" className='text-white' />
                                     </div>
@@ -186,7 +247,7 @@ const IndexPage = () => {
                             </div>
                             <div className=' border-red-600 flex flex-row items-start md:items-center justify-between space-x-[20px] mt-[10px]'>
                                 <div className=' '>
-                                    <Input className='rounded-[5px]' type='text' id={"recherche"} placeholder='Rechercher' onChange={(e) => console.log(e.target.value)} />
+                                    <Input className='rounded-[5px]' type='text' id={"recherche"} placeholder='Rechercher' onChange={(e) => setSearchTerm(e.target.value)} />
                                 </div>
                                 <div className='flex flex-col  space-y-[10px] md:flex-row md:items-center md:justify-between md:space-x-[20px] md:space-y-[0px]'>
                                     {auth?.rolePers != "Accueil_Hebergement" ? null :
@@ -197,13 +258,13 @@ const IndexPage = () => {
                                             <p className='text-secondary_green'>Ajouter séminariste </p>
                                         </Button>
                                     }
-                                    <Button onClick={() => alert("sss")} outline={true} className='button-icon bg-tertiary_green' bg={''}>
+                                    <Button onClick={() => downloadExcel()} outline={true} className='button-icon bg-tertiary_green' bg={''}>
                                         <p className='text-secondary_green'>Exporter</p>
                                     </Button>
                                     {
-                                        <Button onClick={() => alert("sss")} outline={true} className='button-icon bg-tertiary_green' bg={''}>
-                                            <p className='text-secondary_green'>Badge</p>
-                                        </Button>
+                                        // <Button onClick={() => alert("sss")} outline={true} className='button-icon bg-tertiary_green' bg={''}>
+                                        //     <p className='text-secondary_green'>Badge</p>
+                                        // </Button>
                                     }
                                 </div>
                             </div>
@@ -214,7 +275,9 @@ const IndexPage = () => {
                                             <th scope="col" className="px-6 py-3">Nom et prénoms</th>
                                             <th scope="col" className="px-6 py-3">Genre</th>
                                             <th scope="col" className="px-6 py-3">Dortoirs</th>
-                                            <th scope="col" className="px-6 py-3">Niveau</th>
+                                            {currentNiveauData.length > 0 && currentNiveauData[0]?.nomNiveau != "Tous" ? null :
+                                                <th scope="col" className="px-6 py-3">Niveau</th>
+                                            }
                                             <th scope="col" className="px-6 py-3">Sous-comités</th>
                                             <th scope="col" className="px-6 py-3">Santé</th>
                                             <th scope="col" className="px-6 py-3">Contact</th>
@@ -225,14 +288,16 @@ const IndexPage = () => {
                                     <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                                         {
                                             currentNiveauData.length > 0 ?
-                                                currentNiveauData[0]?.seminariste?.map((item: any, index: number) => (
+                                                filteredSeminariste?.map((item: any, index: number) => (
                                                     <tr className={`${index % 2 == 0 ? "bg-white" : "bg-white/50"} dark:bg-gray-800`} key={index}>
                                                         <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                                             {item.nomSemi} {item.prenomSemi}
                                                         </th>
                                                         <td className="px-6 py-4">{item.genreSemi}</td>
                                                         <td className="px-6 py-4">{item.nomdortoir}</td>
-                                                        <td className="px-6 py-4">{currentNiveauData[index]?.nomNiveau}</td>
+                                                        {currentNiveauData.length > 0 && currentNiveauData[0]?.nomNiveau != "Tous" ? null :
+                                                            <td className="px-6 py-4">{item.nomNiveau}</td>
+                                                        }
                                                         <td className="px-6 py-4">{item.sousComite}</td>
                                                         <td className="px-6 py-4">{item.etatSante}</td>
                                                         <td className="px-6 py-4">{item.phoneSemi}</td>
@@ -240,7 +305,7 @@ const IndexPage = () => {
 
                                                         <td className="px-6 py-4 text-right">
                                                             <div className='flex flex-row justify-start items-center space-x-2'>
-                                                                <EditButton onClick={() => {navigate(`/update-seminariste/${item.idSemi}`);localStorage.setItem('currentRouteId',"20")}} />
+                                                                <EditButton onClick={() => { navigate(`/update-seminariste/${item.idSemi}`); localStorage.setItem('currentRouteId', "20") }} />
                                                                 <DeleteButton onClick={() => {
                                                                     setOpen(true)
                                                                     setSeminaristeId(item.idSemi)
