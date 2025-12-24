@@ -19,6 +19,7 @@ const BadgeSeminariste: React.FC = () => {
                     const angle = (i * 45) * Math.PI / 180;
                     const x1 = 50 + Math.cos(angle) * 20;
                     const y1 = 50 + Math.sin(angle) * 20;
+                    console.log(x1, y1);
                     const x2 = 50 + Math.cos(angle) * 35;
                     const y2 = 50 + Math.sin(angle) * 35;
                     return (
