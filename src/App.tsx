@@ -4,7 +4,7 @@ import AuthProvider from "../src/contexts/AuthContext";
 import PrivateRoute from "../src/router/PrivateRoutes";
 import Home from "./Pages/Home";
 import AddPco from "./Pages/Commission/AddPco";
-import AddCommission from "./Pages/Commission/AddCommission";
+import AddCommission from "./Pages/Commission/addCommission";
 import IndexPageComiteOrganisation from "./Pages/ComiteOrganisation/IndexPage";
 import IndexPageSeminariste from "./Pages/Seminariste/IndexPage";
 import IndexPageDortoir from "./Pages/Dortoir/IndexPage";

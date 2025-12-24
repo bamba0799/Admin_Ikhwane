@@ -129,6 +129,7 @@ export interface UpdateMaterielFormValues {
   export interface AddSeminaristeFormValues {
     nomSemi: string;
     prenomSemi: string;
+    matricule: string;
     age: number;
     genreSemi: string;
     phoneSemi: string ; 
