@@ -93,12 +93,6 @@ const UpdateSeminariste = () => {
     ];
 
 
-    const categorieOptions = [
-        { value: "Pepinieres", label: "Pépinière" },
-        { value: "Enfants", label: "Enfants" },
-        { value: "Jeunes_et_Adultes", label: "Jeunes et Adultes" },
-        { value: "Non_specifie", label: "Non spécifié" },
-    ];
 
 
     const { errors } = formState;
