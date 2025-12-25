@@ -42,7 +42,7 @@ const UpdateSeminariste = () => {
             situation: "",
             problemeSante: "",
             niveau: "",
-            categorie: "",
+ 
 
         }
     });
@@ -120,7 +120,6 @@ const UpdateSeminariste = () => {
                 situation: data.situation,
                 problemeSante: data.problemeSante,
                 niveau: data.niveau,
-                categorie: data.categorie,
             };
             console.log("zzzzzz", datas);
 
@@ -170,7 +169,6 @@ const UpdateSeminariste = () => {
             setValue("situation", seminariste.situation);
             setValue("problemeSante", seminariste.problemeSante);
             setValue("niveau", seminariste.niveau.nomNiveau);
-            setValue("categorie", seminariste.categorie);
         } catch (error) {
             console.log("error", error);
         }
@@ -379,26 +377,7 @@ const UpdateSeminariste = () => {
                             {/* line 6 */}
                             <div className='flex flex-col space-y-[20px] md:space-y-[0px]  md:flex-row md:justify-between md:items-center'>
 
-                                <div className="md:w-[48%]">
-                                    <Controller
-                                        name="categorie"
-                                        control={control}
-                                        rules={{
-                                            required: "Ce champ est obligatoire"
-                                        }}
-                                        render={({ field }) => (
-                                            <Select
-                                                {...field}
-                                                options={categorieOptions}
-                                                label="Categorie"
-                                                value={field.value}
-                                                onChange={(value: any) => setValue("categorie", value)} // Mise à jour de la valeur dans React Hook Form
-                                                placeholder="Choisir une categorie"
-                                            />
-                                        )}
-                                    />
-                                    {errors.categorie && (<p className="error-message">{errors.categorie.message}</p>)}
-                                </div>
+                        
 
                         { auth?.rolePers == "Accueil_Hebergement"? null:    
                             <div className="md:w-[48%]">

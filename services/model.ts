@@ -154,7 +154,6 @@ export interface UpdateMaterielFormValues {
     situation: string | null;
     problemeSante: string;
     niveau: string;
-    categorie: string;
   }
 
   export interface AddNiveauFormValues {
