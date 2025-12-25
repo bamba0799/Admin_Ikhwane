@@ -53,8 +53,6 @@ const AddSeminariste = () => {
     const genreOptions = [
         { value: "frere", label: "Frère" },
         { value: "soeur", label: "Soeur" },
-        { value: "pepiniere", label: "Pépinière" },
-        { value: "non_defini", label: "Non défini" },
     ];
 
     const sousComiteOptions = [
