@@ -3,7 +3,7 @@ import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 // Assuming the background image (image 1) is saved as 'background-badge.png' in the same directory or appropriate path.
 // You can import it like this:
-import backgroundImage from './../../assets/image_badge_semi.jpeg'; // Replace with the actual file name/path of image 1
+import backgroundImage from './../../assets/image_badge_co.jpeg'; // Replace with the actual file name/path of image 1
 import Button from '../Button/Button';
 
 interface BadgeProps {
@@ -13,7 +13,7 @@ interface BadgeProps {
   dortoir: string;
 }
 
-const BadgeSeminariste = ({ firstname, lastname, niveau, dortoir }: BadgeProps) => {
+const BadgeCo = ({ firstname, lastname, niveau, dortoir }: BadgeProps) => {
   const badgeRef = useRef<HTMLDivElement>(null);
 
   const handlePrintToPDF = () => {
@@ -50,7 +50,7 @@ const BadgeSeminariste = ({ firstname, lastname, niveau, dortoir }: BadgeProps) 
           color: '#8B0000', // Dark red to match the text color in image 2
           fontFamily: 'sans-serif', // Adjust to match the font if needed
           textAlign: 'center',
-          border: '14px solid #8B0000', // Optional, to mimic the border if present
+          border: '14px solid #0e6a0aff', // Optional, to mimic the border if present
         }}
       >
         {/* Name overlay */}
@@ -78,16 +78,13 @@ const BadgeSeminariste = ({ firstname, lastname, niveau, dortoir }: BadgeProps) 
           fontSize: '22px', // Scaled up from 18px
           color: '#8B0000', // Orange-red to match
         }}>
-          <div className=''>
-            <p className='text-[18px]'>NIVEAU</p>
-            <p className='text-[18px] text-[#FF4500]'>{niveau}</p>
-          </div>
+         
         </div>
 
         {/* Dortoir section */}
         <div style={{
           position: 'absolute',
-          top: '336px', // Scaled up from 280px to match enlargement
+          top: '316px', // Scaled up from 280px to match enlargement
           left: '50%',
           transform: 'translateX(-50%)',
           fontSize: '22px', // Scaled up from 18px
@@ -111,4 +108,4 @@ const BadgeSeminariste = ({ firstname, lastname, niveau, dortoir }: BadgeProps) 
   );
 };
 
-export default BadgeSeminariste;
+export default BadgeCo;

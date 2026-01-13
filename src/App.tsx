@@ -24,6 +24,7 @@ import UpdateMateriel from "./Pages/Materiel/UpdateMateriel";
 import AddMateriel from "./Pages/Materiel/AddMateriel";
 import AddRapport from "./Pages/Rapport/AddRapport";
 import DisplayRapport from "./Pages/Rapport/DisplayRapport";
+import Badge from "./Pages/Document/badge";
 
 function App() { 
   console.log("App");
@@ -65,6 +66,7 @@ function App() {
                <Route path="/display-rapport" element={< DisplayRapport/>} />
             </Route>
             {/* Other routes */}
+             <Route path="/badge/:userType" element={<Badge />} /> {/* semi ou co badge route */}
           </Routes>
         </AuthProvider>
       </Router>

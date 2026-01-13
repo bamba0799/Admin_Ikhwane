@@ -12,6 +12,7 @@ import apiService from '../../../services/api';
 import DeleteModal from '../../ components/Modal/DeleteModal';
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
+import BadgeButton from '../../ components/Button/BadgeButton';
 
 const IndexPage = () => {
 
@@ -40,6 +41,7 @@ const IndexPage = () => {
     const filteredSeminariste = currentNiveauData[0]?.seminariste?.filter((item: any) =>
         item.nomSemi.toLowerCase().includes(searchTerm.toLowerCase())
     );
+    console.log("filteredSeminaristeee", filteredSeminariste);
     const columns = [
         { title: "Nom et Prénoms", field: "nomPrenomSemi", },
         { title: "Genre", field: "genrePers", },
@@ -120,6 +122,23 @@ const IndexPage = () => {
 
         } catch (error) {
             console.error("Error in getNiveau:", error);
+        }
+    }
+    const badgeSeminariste = async (id: any) => {
+        const payload = {
+            ids: [id]
+        }
+        try {
+            const { data: seminariste } = await apiService.getBadgeSeminaristeData(payload);
+            console.log("seminariste badge data", seminariste[0].data);
+            const parsedData = {
+                ...seminariste[0].data,
+                userType: "semi"
+            };
+
+            navigate(`/badge/${JSON.stringify(parsedData)}`); localStorage.setItem('currentRouteId', "40");
+        } catch (error) {
+            console.error("Error in badgeSeminariste:", error);
         }
     }
     const downloadExcel = () => {
@@ -306,6 +325,7 @@ const IndexPage = () => {
                                                         <td className="px-6 py-4 text-right">
                                                             <div className='flex flex-row justify-start items-center space-x-2'>
                                                                 <EditButton onClick={() => { navigate(`/update-seminariste/${item.idSemi}`); localStorage.setItem('currentRouteId', "20") }} />
+                                                                <BadgeButton onClick={() => { badgeSeminariste(item.idSemi) }} />
                                                                 <DeleteButton onClick={() => {
                                                                     setOpen(true)
                                                                     setSeminaristeId(item.idSemi)
