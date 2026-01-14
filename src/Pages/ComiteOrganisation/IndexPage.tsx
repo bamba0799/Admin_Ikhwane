@@ -9,18 +9,18 @@ import Input from '../../ components/Input/Input';
 import EditButton from '../../ components/Button/EditButton';
 import DeleteButton from '../../ components/Button/DeleteButton';
 import apiService from '../../../services/api';
-import jsPDF from 'jspdf';
+// import jsPDF from 'jspdf';
+import * as XLSX from 'xlsx';
 import toast from 'react-hot-toast';
 import DeleteModal from '../../ components/Modal/DeleteModal';
-// import '../../assets/css/index.css';
 const IndexPage = () => {
     const [open, setOpen] = useState<boolean>(false);
     const [coId, setCoId] = useState<any>(null);
     const [isClicked, setIsClicked] = useState<boolean>(false);
+    
 
     let auth: any = localStorage.getItem("user");
     auth = JSON.parse(auth);
-    console.log("auth", auth);
 
     const [activeTabIndex, setActiveTabIndex] = React.useState<number>(0);
     const [totalByComi, setTotalByComi] = React.useState<any>([]);
@@ -29,6 +29,12 @@ const IndexPage = () => {
     const [selectedComiMember, setSelectedComiMember] = React.useState<any>(null);
     const [selectedComiMemberForpdf, setSelectedComiMemberForpdf] = React.useState<any>(null);
 
+      const [searchTerm, setSearchTerm] = useState<string>("");
+        const filteredMembre = selectedComiMember?.membres?.filter((item: any) =>
+            item.nomPers.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+
+        
     const navigate = useNavigate();
 
 
@@ -37,29 +43,40 @@ const IndexPage = () => {
         { title: "Nom et Prénoms", field: "nomPrenomCo", },
         { title: "Genre", field: "genrePers", },
         { title: "Sous comité", field: "sousComite", },
-        { title: "Rôle", field: "rolePers", },
+        { title: "Dortoir", field: "dortoir", },
+        { title: "Santé", field: "sante", },
         { title: "Contact", field: "phonePers", },
         { title: "situation", field: "situation", },
     ]
 
 
-    const downloadPdf = () => {
-        const doc: any = new jsPDF()
-        doc.text(`Commission_${selectedComiMember?.commission}`, 20, 10)
-        doc.autoTable({
-            theme: "grid",
-            columns: columns.map(col => ({ ...col, dataKey: col.field })),
-            body: selectedComiMemberForpdf
-        })
-        doc.save(`${`Commission_${selectedComiMember?.commission}`}.pdf`)
-    }
+    // const downloadPdf = () => {
+    //     const doc: any = new jsPDF()
+    //     doc.text(`Commission_${selectedComiMember?.commission}`, 20, 10)
+    //     doc.autoTable({
+    //         theme: "grid",
+    //         columns: columns.map(col => ({ ...col, dataKey: col.field })),
+    //         body: selectedComiMemberForpdf
+    //     })
+    //     doc.save(`${`Commission_${selectedComiMember?.commission}`}.pdf`)
+    // }
 
+   const downloadExcel = () => {
+       const newData = selectedComiMemberForpdf.map((row:any) => {
+         const newRow = { ...row };
+         delete newRow.tableData;
+         return newRow;
+       });
+       const workSheet = XLSX.utils.json_to_sheet(newData);
+       XLSX.utils.sheet_add_aoa(workSheet, [
+         columns.map(col => col.title) 
+       ], { origin: "A1" });     
+       const workBook = XLSX.utils.book_new();
+       XLSX.utils.book_append_sheet(workBook, workSheet, `${selectedComiMember?.commission}.xlsx`);
+       XLSX.writeFile(workBook, `${selectedComiMember?.commission}.xlsx`);
+     };
 
     const deleteCo = async (id: any) => {
-        // if(pcoPhone == auth?.phonePers){
-        //   toast.error("Vous ne pouvez pas vous supprimer vous même")
-        //   setOpen(false)
-        // } else{
 
         try {
             const { data } = await apiService.deleteCo(id)
@@ -73,21 +90,6 @@ const IndexPage = () => {
             toast.error("Une erreur s'est produite lors de la suppression du pco");
         }
     }
-
-    // const tab = [
-    //     { id: 0, name: "Communicatoin" },
-    //     { id: 1, name: "Restauration" },
-    //     { id: 2, name: "Formation" },
-    //     { id: 3, name: "Sécurité" },
-    //     { id: 4, name: "Protocole" },
-    //     { id: 5, name: "Hygiène" },
-    //     { id: 6, name: "Administration" },
-    //     { id: 7, name: "Accueil/Hébergement" },
-    //     { id: 8, name: "Logistique" },
-    //     { id: 9, name: "Finances" },
-    //     { id: 10, name: "Pépinère" },
-    //     { id: 11, name: "Santé" }
-    // ];
 
 
     const getListParCo = async () => {
@@ -135,7 +137,6 @@ const IndexPage = () => {
             setTotalByComi(totalByComi);
         } catch (error) {
             console.log("error", error);
-
         }
     }
 
@@ -167,8 +168,8 @@ const IndexPage = () => {
                                     eye={false}
                                 />
                                 {/* card2 */}
-                                {auth?.rolePers == "Accueil_Hebergement" ? null :
-                                    <HomeCard onClickEye={() => navigate('/materiel')} bg={'bg-quaternary_green'} title={'Materiels'} item1={{
+                                {auth?.rolePers == "Pco" ? 
+                                    <HomeCard onClickEye={() => {navigate('/materiel');localStorage.setItem('currentRouteId',"20")}} bg={'bg-quaternary_green'} title={'Materiels'} item1={{
                                         title: "Loués",
                                         value: totalByComi?.loues
                                     }} item2={{
@@ -181,28 +182,29 @@ const IndexPage = () => {
                                         }}
                                         icon={'entypo:tools'}
                                         eye={true}
-                                    />}
-                                {/* card3 */}
-                                {/* <HomeCard bg={'bg-quaternary_green'} title={'Caisse de l\'activité (en Fcfa)'} item1={{
-                                    title: "Collecte",
-                                    value: 12
-                                }} item2={{
-                                    title: "Dépense",
-                                    value: 12
-                                }}
-                                    item3={{
-                                        title: "Différence",
-                                        value: 24
+                                    />:
+                                    <HomeCard onClickEye={() => {navigate(`/materiel-detail`);localStorage.setItem('currentRouteId',"20")}} bg={'bg-quaternary_green'} title={'Materiels'} item1={{
+                                        title: "Loués",
+                                        value: totalByComi?.loues
+                                    }} item2={{
+                                        title: "Achetés",
+                                        value: totalByComi?.achetes
                                     }}
-                                    icon={'entypo:tools'}
-                                    eye={true}
-                                /> */}
+                                        item3={{
+                                            title: "Total depenses",
+                                            value: totalByComi?.totalDepenses
+                                        }}
+                                        icon={'entypo:tools'}
+                                        eye={true}
+                                    />
+                                }
+
                             </div>
 
                         </div>
                         {auth?.rolePers == "Pco" ? null :
                             <div className='mt-[10px] flex flex-row justify-end items-center'>
-                                <Button onClick={() => navigate("/add-commission")} outline={true} className='button-icon bg-quaternary_green' bg={''}>
+                                <Button onClick={() => {navigate("/add-commission");localStorage.setItem('currentRouteId',"20")}} outline={true} className='button-icon bg-quaternary_green' bg={''}>
                                     <div className='border rounded-full p-[3px] bg-primary_green'>
                                         <Icon icon="mdi:plus" className='text-white' />
                                     </div>
@@ -226,20 +228,20 @@ const IndexPage = () => {
                             </div>
                             <div className=' border-red-600 flex flex-row items-start md:items-center justify-between space-x-[20px] mt-[10px]'>
                                 <div className=' '>
-                                    <Input className='rounded-[5px]' type='text' id={"recherche"} placeholder='Rechercher' onChange={(e) => console.log(e.target.value)} />
+                                    <Input className='rounded-[5px]' type='text' id={"recherche"} placeholder='Rechercher' onChange={(e) => setSearchTerm(e.target.value)} />
                                 </div>
                                 <div className='flex flex-col  space-y-[10px] md:flex-row md:items-center md:justify-between md:space-x-[20px] md:space-y-[0px]'>
-                                    <Button onClick={() => navigate("/add-commission")} outline={true} className='button-icon bg-quaternary_green' bg={''}>
+                                    <Button onClick={() => {navigate("/display-rapport");localStorage.setItem('currentRouteId',"20")}} outline={true} className='button-icon bg-quaternary_green' bg={''}>
                                         <Icon icon="fluent:document-edit-24-filled" className='text-primary_green text-[18px]' />
-                                        <p className='text-secondary_green'>Rapport </p>
+                                        <p className='text-secondary_green'>Voir rapport </p>
                                     </Button>
-                                    {/* <Button onClick={() => navigate("/add-commission")} outline={true} className='button-icon bg-quaternary_green' bg={''}>
+                                    <Button onClick={() => {navigate("/add-rapport");localStorage.setItem('currentRouteId',"20")}} outline={true} className='button-icon bg-quaternary_green' bg={''}>
                                         <div className='border rounded-full p-[3px] bg-primary_green'>
                                             <Icon icon="mdi:plus" className='text-white' />
                                         </div>
-                                        <p className='text-secondary_green'>Ajouter un membre </p>
-                                    </Button> */}
-                                    <Button onClick={() => downloadPdf()} outline={true} className='button-icon bg-tertiary_green' bg={''}>
+                                        <p className='text-secondary_green'>Ajouter un rapport </p>
+                                    </Button>
+                                    <Button onClick={() => downloadExcel()} outline={true} className='button-icon bg-tertiary_green' bg={''}>
                                         <p className='text-secondary_green'>Exporter</p>
                                     </Button>
                                 </div>
@@ -255,23 +257,23 @@ const IndexPage = () => {
                                             <th scope="col" className="px-6 py-3">Situation</th>
 
                                             {
-                                                (auth?.rolePers == "Pco" && selectedComiMember?.commission == "Pco") ?
+                                                (auth?.rolePers == "Pco" && filteredMembre?.commission == "Pco") ?
                                                     <th scope="col" className="px-6 py-3">Actions</th> : null
                                             }
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                                         {
-                                            selectedComiMember?.membres?.map((item: any, index: number) => (
+                                            filteredMembre?.map((item: any, index: number) => (
                                                 <tr className={`${index % 2 == 0 ? "bg-white" : "bg-white/50"} dark:bg-gray-800`} key={index}>
                                                     <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                                        {item.nomPers} {item.prenomPers}
+                                                        {item.nomPers} {item.pernomPers}
                                                     </th>
                                                     <td className="px-6 py-4">{item.genrePers}</td>
                                                     <td className="px-6 py-4">{item.sousComite}</td>
                                                     <td className="px-6 py-4">{item.phonePers}</td>
-                                                    <td className="px-6 py-4">{item.situation && 'Néant'}</td>
-                                                    {(auth?.rolePers == "Pco" && selectedComiMember?.commission == "Pco") ?
+                                                    <td className="px-6 py-4">{item.situation ?? 'Néant'}</td>
+                                                    {(auth?.rolePers == "Pco" && filteredMembre?.commission == "Pco") ?
                                                         <td className="px-6 py-4">
                                                             <div className="flex items-center space-x-2">
                                                                 <EditButton onClick={() => navigate(`/update-co/${item.idpers}`)} />

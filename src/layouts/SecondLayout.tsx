@@ -6,7 +6,7 @@ type SecondLayoutProps = {
 }
 const SecondLayout: React.FC<SecondLayoutProps> = ({ children, title }) => {
     return (
-        <div className='mt-[50px] lg:mt-[60px] px-[18px] mb-[30px] lg:mb-[70px]'>
+        <div className='mt-[85px] lg:mt-[110px] px-[18px] mb-[30px] lg:mb-[70px]'>
             <div className='flex flex-row  items-center space-x-[5px] mb-[10px]'>
                 <Icon icon="fa-solid:home" className='text-secondary_green'/>
                 <div className='flex flex-row items-center space-x-[1px]'>

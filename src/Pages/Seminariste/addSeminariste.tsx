@@ -14,6 +14,8 @@ import toast from "react-hot-toast";
 
 
 
+
+
 const AddSeminariste = () => {
     const [allDortoirs, setAllDortoirs] = useState([]);
     const [dortoirOptions, setDortoirOptions] = useState([]);
@@ -26,6 +28,7 @@ const AddSeminariste = () => {
         defaultValues: {
             nomSemi: "",
             prenomSemi: "",
+            matricule: "ikh-",
             age: 0,
             genreSemi: "",
             phoneSemi: "",
@@ -35,7 +38,6 @@ const AddSeminariste = () => {
             etatSante: "",
             situation: "",
             problemeSante: "",
-
         }
     });
     // const genreSemi = watch("genreSemi") || "";
@@ -48,12 +50,9 @@ const AddSeminariste = () => {
     // const roleMembre = watch("roleMembre") || "";
     // const [selectedValue, setSelectedValue] = useState("");
 
-
     const genreOptions = [
         { value: "frere", label: "Frère" },
         { value: "soeur", label: "Soeur" },
-        { value: "pepiniere", label: "Pépinière" },
-        { value: "non_defini", label: "Non défini" },
     ];
 
     const sousComiteOptions = [
@@ -67,7 +66,6 @@ const AddSeminariste = () => {
         { value: "Malade", label: "Malade" },
         { value: "Autres", label: "Autres" },
         { value: "Non_specifie", label: "Non specifié" },
-
     ];
 
     // const commisionOptions = [
@@ -127,16 +125,15 @@ const AddSeminariste = () => {
         { value: "Hors du camp", label: "Hors du camp" },
     ]
 
-
     const { errors } = formState;
 
     const addSeminariste = async (data: any) => {
         console.log("yyyyyyy", data);
         try {
-            const datas =
-            {
+            const datas = {
                 nomSemi: data.nomSemi,
                 prenomSemi: data.prenomSemi,
+                matricule: data.matricule,
                 age: parseInt(data.age),
                 genreSemi: data.genreSemi,
                 phoneSemi: data.phoneSemi,
@@ -147,7 +144,7 @@ const AddSeminariste = () => {
                 situation: data.situation,
                 problemeSante: data.problemeSante,
             };
-        console.log("zzzzzz", datas);
+            console.log("zzzzzz", datas);
 
             const { data: seminariste } = await apiService.addSeminariste(datas);
             console.log("seminariste", seminariste);
@@ -181,7 +178,6 @@ const AddSeminariste = () => {
         getAllDortoir()
     }, []);
 
-
     return (
         <div>
             <h1>Commission</h1>
@@ -198,7 +194,7 @@ const AddSeminariste = () => {
                     </div>
                     <div className="mt-4 border px-[10px] md:px-[40px] shadow-2xl rounded-[10px]">
                         <form onSubmit={handleSubmit(addSeminariste)} className='flex flex-col space-y-[20px] md:space-y-[50px] py-[10px] md:py-[30px]'>
-                            {/* line 1 */}
+                            {/* line 1: Nom and Prénom */}
                             <div className='flex flex-col space-y-[20px] md:space-y-[0px]  md:flex-row md:justify-between md:items-center'>
                                 <div className='md:w-[48%]'>
                                     <Input type={'text'} id={'nomSemi'} label='Nom' required={true} {...register("nomSemi", {
@@ -219,8 +215,39 @@ const AddSeminariste = () => {
                                     <p className='error-message'>{errors.prenomSemi?.message}</p>
                                 </div>
                             </div>
-                            {/* line 2 */}
+                            {/* line 2: Matricule and Genre */}
                             <div className='flex flex-col space-y-[20px] md:space-y-[0px]  md:flex-row md:justify-between md:items-center'>
+                                <div className='md:w-[48%]'>
+                                    <Controller
+                                        name="matricule"
+                                        control={control}
+                                        rules={{
+                                            required: "Ce champ est obligatoire",
+                                            pattern: {
+                                                value: /^ikh-/,
+                                                message: "Le matricule doit commencer par 'ikh-'"
+                                            }
+                                        }}
+                                        render={({ field }) => (
+                                            <>
+                                                <label htmlFor="matricule" className="block text-sm font-medium text-gray-700">Matricule *</label>
+                                                <div className="flex">
+                                                    <span className="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-l-md">
+                                                        ikh-
+                                                    </span>
+                                                    <input
+                                                        type="text"
+                                                        id="matricule"
+                                                        className="rounded-none rounded-r-lg bg-white border text-gray-900 focus:ring-green-500 focus:border-green-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5"
+                                                        value={field.value.slice(4)}
+                                                        onChange={(e) => field.onChange(`ikh-${e.target.value}`)}
+                                                    />
+                                                </div>
+                                            </>
+                                        )}
+                                    />
+                                    <p className='error-message'>{errors.matricule?.message}</p>
+                                </div>
                                 <div className="md:w-[48%]">
                                     <Controller
                                         name="genreSemi"
@@ -249,6 +276,9 @@ const AddSeminariste = () => {
                                     />
                                     {errors.genreSemi && (<p className="error-message">{errors.genreSemi.message}</p>)}
                                 </div>
+                            </div>
+                            {/* line 3: Age and Dortoir */}
+                            <div className='flex flex-col space-y-[20px] md:space-y-[0px]  md:flex-row md:justify-between md:items-center'>
                                 <div className=' md:w-[48%]'>
                                     <Input type={'number'} id={'age'} label='Age' required={true} {...register("age", {
                                         required: {
@@ -263,10 +293,6 @@ const AddSeminariste = () => {
                                     })} />
                                     <p className='error-message'>{errors.age?.message}</p>
                                 </div>
-                            </div>
-                            {/* line 3 */}
-                            <div className='flex flex-col space-y-[20px] md:space-y-[0px]  md:flex-row md:justify-between md:items-center'>
-
                                 <div className="md:w-[48%]">
                                     <Controller
                                         name="dortoir"
@@ -287,7 +313,9 @@ const AddSeminariste = () => {
                                     />
                                     {errors.dortoir && (<p className="error-message">{errors.dortoir.message}</p>)}
                                 </div>
-
+                            </div>
+                            {/* line 4: Sous comité and Etat de santé */}
+                            <div className='flex flex-col space-y-[20px] md:space-y-[0px]  md:flex-row md:justify-between md:items-center'>
                                 <div className="md:w-[48%]">
                                     <Controller
                                         name="sousComite"
@@ -308,9 +336,6 @@ const AddSeminariste = () => {
                                     />
                                     {errors.sousComite && (<p className="error-message">{errors.sousComite.message}</p>)}
                                 </div>
-                            </div>
-                            {/* line 4 */}
-                            <div className='flex flex-col space-y-[20px] md:space-y-[0px]  md:flex-row md:justify-between md:items-center'>
                                 <div className="md:w-[48%]">
                                     <Controller
                                         name="etatSante"
@@ -325,12 +350,15 @@ const AddSeminariste = () => {
                                                 label="Etat de santé"
                                                 value={field.value}
                                                 onChange={(value: any) => setValue("etatSante", value)} // Mise à jour de la valeur dans React Hook Form
-                                                placeholder="Choisir un sous comite"
+                                                placeholder="Choisir un état de santé"
                                             />
                                         )}
                                     />
                                     {errors.etatSante && (<p className="error-message">{errors.etatSante.message}</p>)}
                                 </div>
+                            </div>
+                            {/* line 5: Probleme santé and Contact */}
+                            <div className='flex flex-col space-y-[20px] md:space-y-[0px]  md:flex-row md:justify-between md:items-center'>
                                 <div className=' md:w-[48%]'>
                                     <Input type={'text'} id={'problemeSante'} label='Probleme santé' required={false} {...register("problemeSante", {
                                         required: {
@@ -340,10 +368,6 @@ const AddSeminariste = () => {
                                     })} />
                                     <p className='error-message'>{errors.problemeSante?.message}</p>
                                 </div>
-
-                            </div>
-                            {/* line 5 */}
-                            <div className='flex flex-col space-y-[20px] md:space-y-[0px]  md:flex-row md:justify-between md:items-center'>
                                 <div className=' md:w-[48%]'>
                                     <Input type={'number'} id={'phoneSemi'} label='Contact' required={true} {...register("phoneSemi", {
                                         required: {
@@ -358,6 +382,9 @@ const AddSeminariste = () => {
                                     })} />
                                     <p className='error-message'>{errors.phoneSemi?.message}</p>
                                 </div>
+                            </div>
+                            {/* line 6: Contact d'urgence and Situation */}
+                            <div className='flex flex-col space-y-[20px] md:space-y-[0px]  md:flex-row md:justify-between md:items-center'>
                                 <div className=' md:w-[48%]'>
                                     <Input type={'number'} id={'numUrgence'} label="Contact d'urgence" required={true} {...register("numUrgence", {
                                         required: {
@@ -372,10 +399,6 @@ const AddSeminariste = () => {
                                     })} />
                                     <p className='error-message'>{errors.numUrgence?.message}</p>
                                 </div>
-
-                            </div>
-                            {/* line 6 */}
-                            <div className='flex flex-col space-y-[20px] md:space-y-[0px]  md:flex-row md:justify-between md:items-center'>
                                 <div className="md:w-[48%]">
                                     <Controller
                                         name="situation"
@@ -396,7 +419,6 @@ const AddSeminariste = () => {
                                     />
                                     {errors.situation && (<p className="error-message">{errors.situation.message}</p>)}
                                 </div>
-
                             </div>
 
                             <div className=' md:px-[300px] mt-[300px]'>
@@ -414,28 +436,3 @@ const AddSeminariste = () => {
 }
 
 export default AddSeminariste;
-
-
-
-
-
-{/* <div className="md:w-[48%]">
-<Controller
-  name="inputTexte"
-  control={control}
-  rules={{
-    required: "Ce champ est obligatoire",
-  }}
-  render={({ field }) => (
-    <input
-      {...field}
-      type="text"
-      className="input"
-      placeholder="Saisir du texte"
-    />
-  )}
-/>
-{errors.inputTexte && (
-  <p className="error-message">{errors.inputTexte.message}</p>
-)}
-</div> */}

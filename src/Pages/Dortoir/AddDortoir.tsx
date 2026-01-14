@@ -53,7 +53,8 @@ const AddDortoir = () => {
             const { data: dortoir } = await apiService.addDortoir(datas);
             console.log("dortoir", dortoir);
             toast.success("Dortoir ajouté avec succès");
-            navigate(-1);
+            navigate("dortoir");
+            localStorage.setItem('currentRouteId',"4")
         } catch (error) {
             console.log("error", error);
             toast.error("Une erreur s'est produite lors de l'ajout du dortoir");
@@ -70,7 +71,7 @@ const AddDortoir = () => {
                     <div className="flex justify-between">
                         <div className="w-full flex flex-row justify-between">
                             <h1 className="text-2xl font-semibold text-primary_green">Ajouter un dortoir</h1>
-                            <Button onClick={() => navigate(-1)} outline={true} className='button-icon bg-quaternary_green' bg={''}>
+                            <Button onClick={() => {navigate("dortoir");localStorage.setItem('currentRouteId',"4")}} outline={true} className='button-icon bg-quaternary_green' bg={''}>
                                 <Icon icon="solar:arrow-left-linear" className='text-secondary_green w-[20px] h-[20px]' />
                                 <p className='text-secondary_green'>Retour</p>
                             </Button>

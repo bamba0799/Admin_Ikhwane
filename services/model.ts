@@ -13,23 +13,45 @@ export interface User {
     sousComite: string;
     roleMembre: string;
   }
-  
-  // export interface AuthResponse {
-  //   user: User;
-  //   access_token: string;
-  // }
 
-  interface CategoryStats {
-    frere: number ;
-    soeur: number ;
-    Total: number ;
-  }
-
-  export interface UpdateDortoirSeminaristeFormValues{
-    dortoir: string;
-
+  export interface AddRapportFormValues {
+    libelleRapport: string;
+    tacheRealisees: string;
+    commentaires: string;
+    tachesNonRealisees: string;
+    causes: string;
+    difficultes: string;
+    suggestions: string;
+    infoSuplementaire: string;
   }
   
+  export interface AddMaterielFormValues {
+    designation: string;  
+    quantite: number;
+    statut: string;      
+    date: string;
+    lieu: string;
+    cout: number;         
+  }
+
+  export interface UpdateMaterielFormValues{
+    designation: string; 
+    quantite: number; 
+    statut: string; 
+    date: string; 
+    lieu: string; 
+    cout: number; 
+}
+
+  
+export interface UpdateMaterielFormValues {
+  nomMateriel: string;
+  quantite: number;
+  etat: string;
+  genre: string;
+  sousComite: string;
+}
+
   export interface MembreCo {
     frere: number;         // Nombre de frères
     soeur: number;         // Nombre de sœurs
@@ -107,6 +129,7 @@ export interface User {
   export interface AddSeminaristeFormValues {
     nomSemi: string;
     prenomSemi: string;
+    matricule: string;
     age: number;
     genreSemi: string;
     phoneSemi: string ; 
@@ -131,7 +154,6 @@ export interface User {
     situation: string | null;
     problemeSante: string;
     niveau: string;
-    categorie: string;
   }
 
   export interface AddNiveauFormValues {
@@ -146,7 +168,10 @@ export interface User {
  }
 
 
+export interface UpdateDortoirSeminaristeFormValues {
 
+  dortoir: string;
+}
  export interface AddVisiteurFormValues {
   nomVisiteur: string;
   pernomVisiteur: string;

@@ -25,26 +25,18 @@ const UpdateDortoirSeminariste = () => {
     const [genreSemi, setGenreSemi] = useState("");
 
     const [dortoirOptions, setDortoirOptions] = useState([]);
+    console.log("dortoirOptions", dortoirOptions);
+    
     const [relativeDortoirOptions, setRelativeDortoirOptions] = useState([]);
     // const [dortoir, setDortoir] = useState<any>([]);
     const navigate = useNavigate();
-    const { register, handleSubmit, setValue, formState, control } = useForm<UpdateDortoirSeminaristeFormValues>({
+    const { handleSubmit, setValue, formState, control } = useForm<UpdateDortoirSeminaristeFormValues>({
         defaultValues: {
 
             dortoir: "",
 
-
         }
     });
-    // const genreSemi = watch("genreSemi") || "";
-
-
-
-
-
-
-
-
     const { errors } = formState;
 
     const updateDortoirSeminariste = async (data: any) => {
@@ -62,6 +54,7 @@ const UpdateDortoirSeminariste = () => {
             console.log("seminariste", seminariste);
             toast.success("Séminariste modifié avec succès");
             navigate("/dortoir");
+            localStorage.setItem('currentRouteId',"4")
         } catch (error: any) {
             const status = error?.response?.status;
             if (status === 701) {
@@ -121,7 +114,7 @@ const UpdateDortoirSeminariste = () => {
                     <div className="flex justify-between">
                         <div className="w-full flex flex-row justify-between">
                             <h1 className="text-2xl font-semibold text-primary_green">Modifier le dortoir du seminariste</h1>
-                            <Button onClick={() => navigate("/dortoir")} outline={true} className='button-icon bg-quaternary_green' bg={''}>
+                            <Button onClick={() => {navigate("/dortoir");localStorage.setItem('currentRouteId',"4")}} outline={true} className='button-icon bg-quaternary_green' bg={''}>
                                 <Icon icon="solar:arrow-left-linear" className='text-secondary_green w-[20px] h-[20px]' />
                                 <p className='text-secondary_green'>Retour</p>
                             </Button>

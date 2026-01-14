@@ -1,15 +1,13 @@
 import { useEffect, useState } from 'react'
 import Main from '../ components/Main/Main'
 import { useNavigate } from 'react-router-dom';
-
-// import { Button } from 'flowbite-react'
 import Input from '../ components/Input/Input'
 import HomeCard from '../ components/Card/HomeCard'
 import PrimaryLayout from '../layouts/PrimaryLayout'
 import { Icon } from '@iconify/react/dist/iconify.js'
-
+import * as XLSX from 'xlsx';
 import apiService from '../../services/api'
-import jsPDF from 'jspdf'
+// import jsPDF from 'jspdf'
 import 'jspdf-autotable'
 import Button from '../ components/Button/Button'
 import { Commision, MembreCo, Seminariste } from '../../services/model'
@@ -32,6 +30,7 @@ function Home() {
   const [pcoId, setPcoId] = useState<any>(null);
   const [pcoPhone, setPcoPhone] = useState<any>(null);
   const [isClicked, setIsClicked] = useState<boolean>(false);
+  const [totalVisiteur, setTotalVisiteur] = useState<any>()
 
   const [pco, setPco] = useState([])
   const [totalFormateur, setTotalFormateur] = useState<any>(0)
@@ -96,6 +95,7 @@ function Home() {
   // }
   //https://github.com/vikas62081/material-table-YT/blob/pdfExport/src/App.js exporter en excel
 
+
   const deletePco = async (id: any) => {
     if (pcoPhone == auth?.phonePers) {
       toast.error("Vous ne pouvez pas vous supprimer vous même")
@@ -126,16 +126,36 @@ function Home() {
     }
   }
 
-  const downloadPdf = () => {
-    const doc: any = new jsPDF()
-    doc.text("Commission Ikhwane", 20, 10)
-    doc.autoTable({
-      theme: "grid",
-      columns: columns.map(col => ({ ...col, dataKey: col.field })),
-      body: commission
-    })
-    doc.save('table.pdf')
-  }
+  // const downloadPdf = () => {
+  //   const doc: any = new jsPDF()
+  //   doc.text("Commission Ikhwane", 20, 10)
+  //   doc.autoTable({
+  //     theme: "grid",
+  //     columns: columns.map(col => ({ ...col, dataKey: col.field })),
+  //     body: commission
+  //   })
+  //   doc.save('table.pdf')
+  // }
+
+
+  
+
+  const downloadExcel = () => {
+    const newData = commission.map(row => {
+      const newRow = { ...row };
+      return newRow;
+    });
+    const workSheet = XLSX.utils.json_to_sheet(newData);
+    XLSX.utils.sheet_add_aoa(workSheet, [
+      columns.map(col => col.title) 
+    ], { origin: "A1" });
+  
+    const workBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workBook, workSheet, "Commission");
+    XLSX.writeFile(workBook, "Commission.xlsx");
+  };
+  
+  
 
   const getHomeData = async () => {
     setIsLoading(true)
@@ -157,6 +177,7 @@ function Home() {
 
       const { data: totalVisiteur } = await apiService.getTotalVisiteurByGenre()
       console.log("totalVisiteur", totalVisiteur);
+      setTotalVisiteur(totalVisiteur)
 
 
     } catch (error) {
@@ -239,14 +260,14 @@ function Home() {
               </div>
               <HomeCard bg={'bg-quaternary_green mt-3 lg:mt-0 lg:ml-3'} title={'Nombre total de visite'} item1={{
                 title: "Frères",
-                value: 10
+                value: totalVisiteur?.genreVisiteur?.frere
               }} item2={{
                 title: "Sœurs",
-                value: 12
+                value: totalVisiteur?.genreVisiteur?.soeur
               }}
                 item3={{
                   title: "Total",
-                  value: 10
+                  value: totalVisiteur?.totalVisites
                 }}
                 icon={'fa-solid:home'}
                 eye={false}
@@ -256,7 +277,7 @@ function Home() {
               <div className=' '>
                 <Input className='rounded-[5px]' type='text' id={"recherche"} placeholder='Rechercher' onChange={(e) => setSearchTerm(e.target.value)} />
               </div>
-              <Button onClick={() => downloadPdf()} outline={true} className='button-icon bg-tertiary_green' bg={''}>
+              <Button onClick={() => downloadExcel()} outline={true} className='button-icon bg-tertiary_green' bg={''}>
                 <p className='text-secondary_green'>Exporter</p>
               </Button>
             </div>
@@ -271,7 +292,6 @@ function Home() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-
                   {
                     filteredCommission.map((item, index) => (
                       <tr className={`${index % 2 == 0 ? "bg-white" : "bg-white/50"} dark:bg-gray-800`} key={index}>
@@ -291,14 +311,13 @@ function Home() {
             </div>
             <div className='mt-[10px] flex flex-row justify-between items-center'>
               <p className=' text-[12px] text-primary_green font-bold'>Les PCO du séminaire</p>
-              {auth?.rolePers == "Accueil_Hebergement" ? null
-                :
-                <Button onClick={() => navigate("/add-pco")} outline={true} className='button-icon bg-quaternary_green' bg={''}>
+              {auth?.rolePers == "Pco" ? 
+                <Button onClick={() => {navigate("/add-pco"); localStorage.setItem('currentRouteId',"20")}} outline={true} className='button-icon bg-quaternary_green' bg={''}>
                   <div className='border rounded-full p-[3px] bg-primary_green'>
                     <Icon icon="mdi:plus" className='text-white' />
                   </div>
                   <p className='text-secondary_green'>Ajouter un PCO</p>
-                </Button>}
+                </Button>:null}
             </div>
             <div className="relative overflow-x-auto shadow-sm mt-[10px]">
               <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -333,12 +352,10 @@ function Home() {
                                 setOpen(true)
                                 setPcoId(item.idpers)
                                 setPcoPhone(item.phonePers)
-
                               }} />
                             </div>
                             </td>
                           }
-                        
                       </tr>
                     ))
                   }

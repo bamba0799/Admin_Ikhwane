@@ -4,7 +4,7 @@ import AuthProvider from "../src/contexts/AuthContext";
 import PrivateRoute from "../src/router/PrivateRoutes";
 import Home from "./Pages/Home";
 import AddPco from "./Pages/Commission/AddPco";
-import AddCommission from "./Pages/Commission/AddCommission";
+import AddCommission from "./Pages/Commission/addCommission";
 import IndexPageComiteOrganisation from "./Pages/ComiteOrganisation/IndexPage";
 import IndexPageSeminariste from "./Pages/Seminariste/IndexPage";
 import IndexPageDortoir from "./Pages/Dortoir/IndexPage";
@@ -20,6 +20,11 @@ import IndexPageMateriel  from './Pages/Materiel/IndexPage';
 import UpdateCo from "./Pages/Commission/UpdateCo";
 import UpdateDortoirSeminariste from "./Pages/Dortoir/UpdateDortoirSeminariste";
 import Detail from "./Pages/Materiel/Detail";
+import UpdateMateriel from "./Pages/Materiel/UpdateMateriel";
+import AddMateriel from "./Pages/Materiel/AddMateriel";
+import AddRapport from "./Pages/Rapport/AddRapport";
+import DisplayRapport from "./Pages/Rapport/DisplayRapport";
+import Badge from "./Pages/Document/badge";
 
 function App() { 
   console.log("App");
@@ -53,9 +58,15 @@ function App() {
 
               {/* materiel */}
                <Route path="/materiel" element={< IndexPageMateriel/>} />
-               <Route path="/materiel-detail/:commission" element={< Detail/>} />
+               <Route path="/materiel-detail" element={< Detail/>} />
+               <Route path="/update-materiel/:materielId" element={< UpdateMateriel/>} />
+               <Route path="/add-materiel" element={< AddMateriel/>} />
+               {/* rapport */}
+               <Route path="/add-rapport" element={< AddRapport/>} />
+               <Route path="/display-rapport" element={< DisplayRapport/>} />
             </Route>
             {/* Other routes */}
+             <Route path="/badge/:userType" element={<Badge />} /> {/* semi ou co badge route */}
           </Routes>
         </AuthProvider>
       </Router>

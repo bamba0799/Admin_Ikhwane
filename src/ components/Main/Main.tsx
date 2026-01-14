@@ -6,6 +6,10 @@ import SideBar from "../SideBar/SideBar"
 
 const Main = ({children}:any) => {
 
+  let auth: any = localStorage.getItem("user");
+  auth = JSON.parse(auth);
+  console.log("auth", auth);
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   const toggleSideBar = () => {
@@ -18,7 +22,7 @@ const Main = ({children}:any) => {
     </button>
     :null
     }
-    <Header toggleSideBar={toggleSideBar}/>
+    <Header toggleSideBar={toggleSideBar} authName={auth?.nomPers}/>
     <SideBar isSidebarOpen={isSidebarOpen}/>
       {children}
     </div>

@@ -42,7 +42,7 @@ const UpdateSeminariste = () => {
             situation: "",
             problemeSante: "",
             niveau: "",
-            categorie: "",
+ 
 
         }
     });
@@ -93,12 +93,6 @@ const UpdateSeminariste = () => {
     ];
 
 
-    const categorieOptions = [
-        { value: "Pepinieres", label: "Pépinière" },
-        { value: "Enfants", label: "Enfants" },
-        { value: "Jeunes_et_Adultes", label: "Jeunes et Adultes" },
-        { value: "Non_specifie", label: "Non spécifié" },
-    ];
 
 
     const { errors } = formState;
@@ -120,7 +114,6 @@ const UpdateSeminariste = () => {
                 situation: data.situation,
                 problemeSante: data.problemeSante,
                 niveau: data.niveau,
-                categorie: data.categorie,
             };
             console.log("zzzzzz", datas);
 
@@ -128,6 +121,7 @@ const UpdateSeminariste = () => {
             console.log("seminariste", seminariste);
             toast.success("Séminariste modifié avec succès");
             navigate("/seminariste");
+            localStorage.setItem('currentRouteId',"3")
         } catch (error) {
             console.log("error", error);
             toast.error("Une erreur s'est produite lors de la modification du seminariste");
@@ -169,7 +163,6 @@ const UpdateSeminariste = () => {
             setValue("situation", seminariste.situation);
             setValue("problemeSante", seminariste.problemeSante);
             setValue("niveau", seminariste.niveau.nomNiveau);
-            setValue("categorie", seminariste.categorie);
         } catch (error) {
             console.log("error", error);
         }
@@ -189,7 +182,7 @@ const UpdateSeminariste = () => {
                     <div className="flex justify-between">
                         <div className="w-full flex flex-row justify-between">
                             <h1 className="text-2xl font-semibold text-primary_green">Modifier un séminariste</h1>
-                            <Button onClick={() => navigate("/add-commission")} outline={true} className='button-icon bg-quaternary_green' bg={''}>
+                            <Button onClick={() => {navigate("/seminariste");localStorage.setItem('currentRouteId',"3")}} outline={true} className='button-icon bg-quaternary_green' bg={''}>
                                 <Icon icon="solar:arrow-left-linear" className='text-secondary_green w-[20px] h-[20px]' />
                                 <p className='text-secondary_green'>Retour</p>
                             </Button>
@@ -378,26 +371,7 @@ const UpdateSeminariste = () => {
                             {/* line 6 */}
                             <div className='flex flex-col space-y-[20px] md:space-y-[0px]  md:flex-row md:justify-between md:items-center'>
 
-                                <div className="md:w-[48%]">
-                                    <Controller
-                                        name="categorie"
-                                        control={control}
-                                        rules={{
-                                            required: "Ce champ est obligatoire"
-                                        }}
-                                        render={({ field }) => (
-                                            <Select
-                                                {...field}
-                                                options={categorieOptions}
-                                                label="Categorie"
-                                                value={field.value}
-                                                onChange={(value: any) => setValue("categorie", value)} // Mise à jour de la valeur dans React Hook Form
-                                                placeholder="Choisir une categorie"
-                                            />
-                                        )}
-                                    />
-                                    {errors.categorie && (<p className="error-message">{errors.categorie.message}</p>)}
-                                </div>
+                        
 
                         { auth?.rolePers == "Accueil_Hebergement"? null:    
                             <div className="md:w-[48%]">

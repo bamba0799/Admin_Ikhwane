@@ -2,70 +2,84 @@ import { Icon } from "@iconify/react/dist/iconify.js";
 import React, { useEffect, useState } from "react";
 import logo_aeemci from "../../assets/logo_aeemci.jpg";
 import Button from "../Button/Button";
-import messi from '../../assets/lionel-messi.jpg';
 
 interface HeaderProps {
   toggleSideBar: () => void;
   isActiveMenuBar?: boolean
+  authName?: string
 
 }
 type HeaderIconType = {
+  id: number
   icon: string,
   name: string,
   path: string
 }
 
-const Header: React.FC<HeaderProps> = ({ toggleSideBar, isActiveMenuBar=true }) => {
-  const [activeTab, setActiveTab] = useState<string>("");
+const Header: React.FC<HeaderProps> = ({ toggleSideBar, isActiveMenuBar = true, authName }) => {
+  const [routeLoaded, setRouteLoaded] = useState<boolean>(false);
+  console.log("routeLoaded", routeLoaded);
+  
+  const [activeTab, setActiveTab] = useState<number>(2);
   const HeaderIcon: HeaderIconType[] = [
     {
+      id: 1,
       icon: "material-symbols:empty-dashboard-sharp",
-      name:"Tableau de bord",
+      name: "Tableau de bord",
       path: "/home",
     },
     {
+      id: 2,
       icon: "fa:group",
-      name:"Comité d'organisation",
+      name: "Comité d'organisation",
       path: "/comite-organisation",
     },
     {
+      id: 3,
       icon: "mdi:account-student",
-      name:"Séminariste",
+      name: "Séminariste",
       path: "/seminariste",
     },
     {
+      id: 4,
       icon: "fa-solid:home",
-      name:"Dortoir",
+      name: "Dortoir",
       path: "/dortoir",
     },
     {
+      id: 5,
       icon: "heroicons:users-solid",
-      name:"Visiteurs",
+      name: "Visiteurs",
       path: "/visiteur",
     },
 
     {
-      icon: "bi:patch-check-fill",
-      name:"Permissions",
-      path: "/permissions",
+      id: 6,
+      icon: "uiw:logout",
+      name: "Deconnexion",
+      path: "/",
     },
-    
-
   ]
+  const isRouteValid = (): boolean => {
+    let currentRouteId: any = localStorage.getItem('currentRouteId')
+    currentRouteId = currentRouteId ? parseInt(currentRouteId, 10) : 0;
+    return HeaderIcon.some(item => item.id === currentRouteId); // Retourne true si le chemin actuel est dans la liste
+  };
+
 
   const handleRefresh = () => {
     window.location.reload();
   };
-  
+
 
   const getOnglet = () => {
-    const currentPath = window.location.pathname;
-    console.log("currentPath", currentPath);
-    
-    const activeItem = HeaderIcon.find(item => item.path === currentPath);
+    let currentRouteId: any = localStorage.getItem('currentRouteId')
+    currentRouteId = currentRouteId ? parseInt(currentRouteId, 10) : 0;
+    const activeItem = HeaderIcon.find(item => item.id === currentRouteId);
     if (activeItem) {
-      setActiveTab(activeItem.path);
+      setActiveTab(activeItem.id);
     }
+    setRouteLoaded(true);
   }
 
   useEffect(() => {
@@ -79,9 +93,11 @@ const Header: React.FC<HeaderProps> = ({ toggleSideBar, isActiveMenuBar=true }) 
         <div className="flex flex-row items-center justify-between">
           <div className="flex items-center justify-start rtl:justify-end">
             <div className="lg:hidden flex flex-row items-center space-x-[5px]">
-              <button onClick={toggleSideBar} className=" inline-flex items-center p-2 text-sm text-gray-500 rounded-lg  hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200">
-                <Icon icon="vaadin:menu" className="w-4 h-4 text-black" />
-              </button>
+              {isRouteValid() &&
+                <button onClick={toggleSideBar} className=" inline-flex items-center p-2 text-sm text-gray-500 rounded-lg  hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200">
+                  <Icon icon="vaadin:menu" className="w-4 h-4 text-black" />
+                </button>
+              }
               <p className="text-[12px] text-green-700">Admin Ikhwane</p>
             </div>
             <div className="flex flex-row items-center space-x-[25px]">
@@ -99,30 +115,35 @@ const Header: React.FC<HeaderProps> = ({ toggleSideBar, isActiveMenuBar=true }) 
           </div>
           <button className="relative  rounded-full h-[30px] w-[30px] flex flex-row justify-center items-center group">
             <div className="absolute hidden lg:flex flex-col text-[12px] right-[50px] ">
-              <p>Kandé</p>
-              <p>dk47hh8</p>
+              <p>{authName}</p>
+              {/* <p>dk47hh8</p> */}
             </div>
             <div className="p-1 flex flex-col lg:hidden items-start  opacity-0 group-hover:opacity-100 lg:group:opacity-100 transition-opacity duration-300 absolute -top-1/2 transform translate-y-[15%] right-[45px] border bg-white text-[12px]">
-              <span>Kandé</span>
-              <p>dk47hh8</p>
+              <span>{authName}</span>
+              {/* <p>dk47hh8</p> */}
             </div>
             {/* <Icon icon="basil:user-solid" className="w-[30px] h-[30px] text-black absolute"/> */}
-            <div className="absolute rounded-full w-[35px] h-[35px]">
-              <img src={messi} alt="" className=" text-black h-full w-full rounded-full object-cover" />
+            <div className="absolute rounded-full w-[20px] h-[20px]">
+              <Icon icon="solar:user-bold" className="w-full h-full text-black" />
             </div>
 
           </button>
         </div>
       </div>
-      <div className={`bg-primary_green px-[15px] h-[80px]  fixed w-full hidden ${isActiveMenuBar==true?"lg:flex":"lg:none"} flex-col justify-center`}>
+      <div className={`bg-primary_green px-[15px] h-[80px]  fixed w-full hidden ${isActiveMenuBar == true ? "lg:flex" : "lg:none"} flex-col justify-center`}>
         <div className="flex flex-row h-full justify-between">
           {HeaderIcon.map((item, index) => (
             <a key={index} href={item.path} onClick={() => {
-              setActiveTab(item.path)
-            }} className={` w-[140px] flex flex-row justify-center items-center text-white/70 ${activeTab == item.path ? 'bg-white/30 text-white' : ''}`}>
+              if (item.name == "Deconnexion") {
+                console.log("deconnexion");
+                localStorage.clear();
+              }
+              localStorage.setItem('currentRouteId', item.id.toString())
+              setActiveTab(item.id)
+            }} className={` w-[140px] flex flex-row justify-center items-center text-white/70 ${activeTab == item.id ? 'bg-white/30 text-white' : ''}`}>
               <div className="flex flex-col justify-between items-center space-y-[3px]">
-                <Icon icon={item.icon} className={`w-[30px] h-[30px] ${activeTab == item.path ? 'text-white' : 'text-primary_gray'} `} />
-                <span className={`text-[12px] ${activeTab == item.path ? 'text-white' : 'text-primary_gray'}`}>{item.name}</span>
+                <Icon icon={item.icon} className={`w-[30px] h-[30px] ${activeTab == item.id ? 'text-white' : 'text-primary_gray'} `} />
+                <span className={`text-[12px] ${activeTab == item.id ? 'text-white' : 'text-primary_gray'}`}>{item.name}</span>
               </div>
             </a>
           ))}
